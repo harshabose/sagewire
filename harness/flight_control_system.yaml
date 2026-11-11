@@ -1,0 +1,161 @@
+# Flight control system harness (work in progress)
+# Scope so far: PDB -> Cube Orange+ power link, and two separate DroneCAN links:
+# Cube CAN1 -> Sierra PrecisionPoint-Pro GPS, and Cube CAN2 -> airspeed sensor.
+# The airspeed sensor has its own bus because it will sit far from the GPS (long cable).
+# The LightWare GRF-500 LiDAR is wired to the Cube GPS2 port (UART8, SERIAL4 in ArduPilot).
+# ServoBoard and the other signals come later.
+#
+# Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
+
+metadata:
+  title: Flight control system
+  description: Flight controller power link, DroneCAN links (GPS on CAN1, airspeed on CAN2) and LiDAR on GPS2
+
+connectors:
+
+  # Harness-side plug that mates with the PDB's 6-pin JST-GH output (board part SM06B-GHS-TB).
+  # The PDB board is defined in power_system.yaml; only its output plug appears here.
+  PDB_FC_PWR:
+    type: JST GH 6-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-06V-S
+    notes: "PDB analog power output. Pin order assumed 5V, 5V, IOUT, VOUT, GND, GND."
+    pinlabels: [5V, 5V, IOUT, VOUT, GND, GND]
+
+  # Harness-side plug for the Cube Orange+ POWER1 port.
+  FC_POWER1:
+    type: Molex CLIK-Mate 2.00 mm 6-pin housing
+    notes: "Cube Orange+ POWER1. CURRENT and VOLTAGE are analog, 3.3 V max."
+    pinlabels: [VCC, VCC, CURRENT, VOLTAGE, GND, GND]
+
+  # ---- DroneCAN: Cube CAN1 -> GPS, and Cube CAN2 -> airspeed sensor (two separate buses) -----
+  # All CAN ports below use the Pixhawk standard 4-pin order: 1 VCC (5 V), 2 CAN_H, 3 CAN_L, 4 GND.
+  # The Cube and the Sierra GPS document this order. For the airspeed sensor it is an ASSUMPTION,
+  # because Sierra has no pinout document. TODO: get it from Sierra before the first power-up.
+  # TODO: connector series is not stated for any of these ports. Pixhawk-standard CAN is usually
+  # 4-pin JST-GH, but check the carrier, the GPS and the sensor before buying plugs.
+
+  # Cube Orange+ CAN1: GPS only. Each bus is point to point, so BOTH ends of each bus need
+  # 120 ohm termination. Cube end: check if the carrier has it built in (measure CAN_H to CAN_L
+  # with nothing plugged in and power off, about 120 ohm = terminated).
+  FC_CAN1:
+    type: 4-pin CAN plug   # TODO: series
+    notes: "Cube Orange+ CAN1 (GPS). The Cube supplies the 5 V on pin 1. Cube-end termination: measure, see comment."
+    pinlabels: [VCC, CAN_H, CAN_L, GND]
+
+  # Cube Orange+ CAN2: airspeed sensor only.
+  FC_CAN2:
+    type: 4-pin CAN plug   # TODO: series
+    notes: "Cube Orange+ CAN2 (airspeed sensor). The Cube supplies the 5 V on pin 1. Cube-end termination: measure, see comment."
+    pinlabels: [VCC, CAN_H, CAN_L, GND]
+
+  # Sierra PrecisionPoint-Pro, alone on CAN1, so it is the far end of that bus.
+  # Set CAN_TERM=1 (software termination) in its configuration. CAN1.2 is left unused.
+  GPS_CAN1_1:
+    type: 4-pin CAN plug   # TODO: series
+    notes: "Sierra PrecisionPoint-Pro CAN1.1. Max 5 V 250 mA for the module. End node: set CAN_TERM=1."
+    pinlabels: [VCC, CAN_H, CAN_L, GND]
+
+  # Sierra TrueSpeed V2 airspeed sensor, alone on CAN2. Pin order assumed (see above).
+  # TODO: ask Sierra if it has built-in termination and how it is enabled. If not, a 120 ohm
+  # resistor across CAN_H and CAN_L at this end is needed, because it is the far end of the bus.
+  ARSP_CAN:
+    type: 4-pin CAN plug   # TODO: series
+    notes: "Sierra TrueSpeed V2 CAN port, about 50 mA nominal. Pin order assumed Pixhawk standard."
+    pinlabels: [VCC, CAN_H, CAN_L, GND]
+
+  # ---- LightWare GRF-500 LiDAR -> Cube GPS2 (UART, 3.3 V logic) ------------------------------
+  # GRF-500 serial/I2C port: JST SUR 8-pin, mating housing 08SUR-32S (product guide, section 7.2).
+  # Pin 1 TXD (sensor transmit), 2 RXD (sensor receive), 3 GPIO (alarm output, unused),
+  # 4 not used, 5 Disable (leave floating to operate), 6 VIN 4.5-5.5 V (120 mA typical,
+  # 250 mA surge at start-up), 7 GND, 8 GND. Pin labels repeat (GND), so pins are used by number.
+  LRF_COMM:
+    type: JST SUR 8-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: 08SUR-32S
+    notes: "LightWare GRF-500 serial port. Pin 1 is the sensor TXD, so it goes to the Cube RX. Pin 5 (Disable) stays floating. TODO: crimp contact part number and wire range for the SUR series."
+    pinlabels: [TXD, RXD, GPIO, NC, DISABLE, VIN, GND, GND]
+    hide_disconnected_pins: true
+
+  # Cube Orange+ GPS2 port, 6-pin: 1 VCC 5 V, 2 TX (out), 3 RX (in), 4 SCL (I2C1), 5 SDA (I2C1),
+  # 6 GND. UART signals are 3.3 V, which matches the GRF-500 (3.3 V TTL, 5 V tolerant).
+  # SCL/SDA are not used (the GRF-500 is on UART here), so pins 4 and 5 stay empty.
+  FC_GPS2:
+    type: 6-pin GPS2 plug   # TODO: series
+    notes: "Cube Orange+ GPS2 (UART8). Cube TX (pin 2) goes to the sensor RXD, Cube RX (pin 3) to the sensor TXD."
+    pinlabels: [VCC, TX, RX, SCL, SDA, GND]
+    hide_disconnected_pins: true
+
+  # Not used: Sierra PrecisionPoint-Pro CAN1.2 port and its 7-pin Peripherals port (F9P UART2
+  # TX/RX, MCU USART1 TX/RX, PPS, EXTINT, GND, all 3.3 V). Not needed for DroneCAN, left unwired.
+
+cables:
+
+  # PDB -> Cube POWER1, one wire per pin, straight through.
+  # 26 AWG is the one size both crimp contacts accept (JST GH contact: 26-30 AWG, 1 A;
+  # Molex CLIK-Mate 2.00 mm terminal: 22-26 AWG). Load is well under 1 A on the two 5 V pins.
+  # Colors: two red 5 V, yellow for the current sense, blue for the voltage sense, two black
+  # ground. ArduPilot docs show the vendor convention as red/black only, so this is a
+  # choice to tell the two analog signals apart. Change if you prefer the vendor look.
+  W_FC_01:
+    wirecount: 6
+    gauge: 26 AWG
+    colors: [RD, RD, YE, BU, BK, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "PDB analog power output to Cube POWER1"
+
+  # Cube CAN1 -> GPS CAN1.1. 5 V, CAN_H, CAN_L, GND. Keep CAN_H and CAN_L twisted together.
+  # Colors vary between vendors; yellow = CAN_H and green = CAN_L is a choice, not a standard.
+  # Load on this cable is the GPS only (up to 250 mA), well inside 26 AWG and a 1 A JST-GH contact.
+  W_FC_02:
+    wirecount: 4
+    gauge: 26 AWG
+    colors: [RD, YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Cube CAN1 to GPS. Twist CAN_H/CAN_L."
+
+  # Cube CAN2 -> airspeed sensor. Expected to be long (sensor position not fixed yet).
+  # Load is about 50 mA, so the 5 V drop on 26 AWG is small even for a few metres. For a long
+  # run keep CAN_H/CAN_L twisted and consider a shielded cable.
+  W_FC_03:
+    wirecount: 4
+    gauge: 26 AWG
+    colors: [RD, YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis, expected long
+    notes: "Cube CAN2 to airspeed sensor. Twist CAN_H/CAN_L; long run."
+
+  # Cube GPS2 -> GRF-500. 4 wires: 5 V, sensor TXD to Cube RX, Cube TX to sensor RXD, GND.
+  # Only GND pin 7 is used (pin 8 is also GND on the sensor). Load is 120 mA typical, 250 mA at
+  # start-up: on 30 AWG that is about 0.17 V per metre of cable (supply plus return), against
+  # a 4.5 V minimum at the sensor, so keep the run short or use a heavier wire.
+  # TODO: SUR contact wire range is not confirmed (GH takes 26-30 AWG), so check 30 AWG fits both.
+  W_FC_04:
+    wirecount: 4
+    gauge: 30 AWG
+    colors: [RD, YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Cube GPS2 to GRF-500 (serial). Wires: 1 5 V, 2 sensor TXD to Cube RX, 3 Cube TX to sensor RXD, 4 GND."
+
+connections:
+
+  # Labels repeat (5V, 5V, GND, GND), so pins are referenced by number.
+  - - PDB_FC_PWR: [1-6]
+    - W_FC_01: [1-6]
+    - FC_POWER1: [1-6]
+
+  # DroneCAN. Labels are unique here, so pins are referenced by name.
+  - - FC_CAN1: [VCC, CAN_H, CAN_L, GND]
+    - W_FC_02: [1, 2, 3, 4]
+    - GPS_CAN1_1: [VCC, CAN_H, CAN_L, GND]
+
+  - - FC_CAN2: [VCC, CAN_H, CAN_L, GND]
+    - W_FC_03: [1, 2, 3, 4]
+    - ARSP_CAN: [VCC, CAN_H, CAN_L, GND]
+
+  # LiDAR on GPS2, referenced by pin number (LRF_COMM has two GND pins).
+  # Cube VCC(1) -> sensor VIN(6); Cube RX(3) <- sensor TXD(1); Cube TX(2) -> sensor RXD(2); GND(6) -> GND(7).
+  - - FC_GPS2: [1, 3, 2, 6]
+    - W_FC_04: [1, 2, 3, 4]
+    - LRF_COMM: [6, 1, 2, 7]

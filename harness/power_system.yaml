@@ -1,0 +1,175 @@
+# Power system harness (work in progress)
+# Scope: battery -> PDB -> BECs. The PDB -> flight controller link lives in
+# flight_control_system.yaml.
+#
+# Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
+# Gauges and colors are recommendations, see the comment above each cable.
+
+metadata:
+  title: Power system
+  description: Battery, PDB and BEC input wiring
+
+connectors:
+
+  # Battery input (J2). Per the axldrone PDB-400A datasheet it is bolted (3 mm bolt, ring lugs
+  # on the battery cable), not soldered. The lugs belong to the battery cable, so they are added
+  # when the battery side is decided. Board feature, so not in the BOM.
+  # Battery side (connector, cable) is not decided yet, so only the PDB end is shown.
+  PDB_J2BAT:
+    type: Bolted ring-lug terminals (3 mm bolt)
+    notes: "PDB battery input (J2). Board range 14-60 V. Battery: 12S 2P, 48.0 V nominal, 50.4 V max."
+    pinlabels: [BAT_POS, BAT_NEG]
+    ignore_in_bom: true
+
+  # All eight ESC outputs as one board feature. Solder pads, no pin numbers,
+  # so the pin IDs below are just 1-16 in label order.
+  # These pads are assumed to sit on the battery bus, so they are used here as battery taps for
+  # the BECs. TODO: check whether they are downstream of the soft-switch MOSFET (BEC off when the
+  # switch is open) or upstream (BEC always on). The switch LED behaviour depends on it.
+  PDB_ESC:
+    type: Solder pads
+    notes: "ESC outputs ESC1 to ESC8, + and - pad each."
+    pinlabels: [ESC1_POS, ESC1_NEG, ESC2_POS, ESC2_NEG, ESC3_POS, ESC3_NEG, ESC4_POS, ESC4_NEG,
+                ESC5_POS, ESC5_NEG, ESC6_POS, ESC6_NEG, ESC7_POS, ESC7_NEG, ESC8_POS, ESC8_NEG]
+    hide_disconnected_pins: true
+    ignore_in_bom: true
+
+  # KDE UBECUVC input leads: factory 16 AWG red/black, pre-tinned 2 mm exposed ends.
+  # The leads come with the UBEC, so they are modelled as cable W_PWR_01 and nothing goes in the BOM.
+  UBEC_IN:
+    type: UBEC input (factory leads exit the body)
+    notes: "KDE UBECUVC input: red (+), black (-). Input 14.8 V (4S) to 60.9 V (14S LiHV) per spec table."
+    pinlabels: [IN_POS, IN_NEG]
+    ignore_in_bom: true
+
+  # Teravolt AeroBuck-5 5 V buck converter (powers the LED). Input is solder pads, so
+  # nothing to buy here. Its output is modelled in another file.
+  BEC5V_IN:
+    type: Solder pads
+    notes: "Teravolt AeroBuck-5 5V"
+    pinlabels: [IN_POS, IN_NEG]
+    ignore_in_bom: true
+
+  # Harness-side plug for the PDB soft power switch input (2-pin JST 2.5 mm on the board).
+  # Datasheet: MOSFET anti-spark soft switch, power is on while the two pins are closed together
+  # ("if not using the switch, short the switch pins"), so a latching switch is used. It is a
+  # plain contact, so pin order does not matter. Datasheet also says not to switch it ON or OFF
+  # with a load connected; ask axldrone before using it for reboots in the aircraft.
+  # TODO: series is probably XH, but the datasheet gives no part number. Try an XHP-2 on the
+  # board header; if it does not fit, switch to EH (EHR-2).
+  PDB_SW:
+    type: JST XH 2-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: XHP-2
+    notes: "PDB soft power switch. Crimp contacts SXH-001T-P0.6. Pin order does not matter."
+    pinlabels: [SW_1, SW_2]
+
+  # Latching 16 mm metal pushbutton with LED ring (ProMax PPS16006RL-11F, from the seller listing).
+  # C and NO go to the PDB. The LED has its own two pins and is wired in another file
+  # (5 V from the AeroBuck-5 output). Listing says LED 5 V in one place and 6 V in another.
+  # TODO: confirm terminal type (listing says both "crimp style" and "solder lugs") and whether
+  # the LED has a built-in resistor.
+  SW_BTN:
+    type: 16 mm latching metal pushbutton with LED ring
+    manufacturer: ProMax
+    mpn: PPS16006RL-11F
+    notes: "SPST, C/NO/NC terminals. IP65. Red LED ring, separate LED pins. Closed = PDB on."
+    pinlabels: ["C", "NO", "NC", "LED_POS", "LED_NEG"]   # NO is quoted on purpose: unquoted YAML reads NO as false
+    hide_disconnected_pins: true
+
+  # Recommended by the PDB datasheet: 220 uF 100 V capacitor on the battery side of the PDB.
+  # Battery max is 50.4 V (12S), so 100 V leaves a wide margin. Low-ESR electrolytic.
+  # Mount it close to the battery bolts and watch the polarity.
+  # TODO: pick the part (low-ESR, 100 V or higher, radial, ripple current rating).
+  CAP_BAT:
+    type: Electrolytic capacitor 220 uF 100 V
+    notes: "Battery side of the PDB, across B+ and B-. Observe polarity."
+    pinlabels: [CAP_POS, CAP_NEG]
+
+  # --- Parked (not used in this build) -------------------------------------------------
+  # PDB on-board BEC header (J3, 2x7): four 5 V and three 12 V outputs. None of them is used:
+  # the Cube is powered from the PDB 6-pin output (see flight_control_system.yaml) and the
+  # 5 V LED supply comes from the separate AeroBuck-5. Kept commented out for reference.
+  # Un-comment it if a load is ever wired to this header.
+  #
+  # PDB_J3_BEC:
+  #   type: 2x7 pin header, 2.5 mm
+  #   notes: "5V and 12V outputs. Pin IDs are synthetic, not the vendor numbering."
+  #   pinlabels: [5V_1, 5V_2, 5V_3, 5V_4, 12V_5, 12V_6, 12V_7,
+  #               GND_1, GND_2, GND_3, GND_4, GND_5, GND_6, GND_7]
+  #   hide_disconnected_pins: true
+  #   ignore_in_bom: true
+  #
+  # KDE UBECUVC high-current (HP) output leads. Output is modelled in another file.
+  #
+  # UBEC_HP:
+  #   type: UBEC high-current output lead ends (pre-tinned)
+  #   notes: "KDE UBECUVC HP output: yellow (+), black (-), 16 AWG, about 210 mm. Output voltage selectable 5/6/8/12 V, set to 12 V. 10 A continuous through the leads."
+  #   pinlabels: [HP_POS, HP_NEG]
+  #   ignore_in_bom: true
+
+cables:
+
+  # PDB -> KDE UBEC input. These are the UBEC's own factory leads (16 AWG, red/black, about
+  # 210 mm), so they stay out of the BOM. Keep 16 AWG if the leads are ever extended: the UBEC
+  # is rated 10 A continuous output, so input current is a few amps at battery voltage.
+  W_PWR_01:
+    wirecount: 2
+    gauge: 16 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (factory leads are about 0.21 m)
+    ignore_in_bom: true
+    notes: "Factory UBEC input leads"
+
+  # PDB -> AeroBuck-5 input. Converter is 5 V / 4 A / 20 W max, so input is under about 2 A
+  # even at the lowest battery voltage. 22 AWG is plenty and easy to solder to the small pads.
+  # (Silicone-insulated stranded wire is the usual choice for flexibility and soldering.)
+  W_PWR_02:
+    wirecount: 2
+    gauge: 22 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "AeroBuck-5 input"
+
+  # PDB soft switch -> pushbutton, plain two-wire contact, so 24 AWG is plenty.
+  # Colors only help tell the two ends apart; polarity does not matter.
+  W_PWR_03:
+    wirecount: 2
+    gauge: 24 AWG
+    colors: [WH, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "PDB soft switch to pushbutton"
+
+  # Capacitor leads. They come with the capacitor, so they stay out of the BOM; keep them short.
+  W_PWR_04:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0   # TODO: real length (capacitor leads, keep as short as possible)
+    ignore_in_bom: true
+    notes: "Capacitor leads, short as possible"
+
+connections:
+
+  # Battery -> PDB: battery side not decided yet (connector, cable). TODO once chosen.
+
+  # Capacitor across the battery bolts (J2).
+  - - PDB_J2BAT: [BAT_POS, BAT_NEG]
+    - W_PWR_04: [1, 2]
+    - CAP_BAT: [CAP_POS, CAP_NEG]
+
+  # PDB soft switch -> pushbutton (C and NO). The LED pins are wired in another file.
+  - - PDB_SW: [1, 2]
+    - W_PWR_03: [1, 2]
+    - SW_BTN: ["C", "NO"]
+
+  # PDB -> UBEC. ESC7 pad pair is a placeholder; any pad pair that is free works.
+  # TODO: confirm with a continuity check that the ESC pads connect straight to B+/B-.
+  - - PDB_ESC: [ESC7_POS, ESC7_NEG]
+    - W_PWR_01: [1, 2]
+    - UBEC_IN: [IN_POS, IN_NEG]
+
+  # PDB -> 5 V BEC. ESC8 pad pair is a placeholder, same checks as above.
+  - - PDB_ESC: [ESC8_POS, ESC8_NEG]
+    - W_PWR_02: [1, 2]
+    - BEC5V_IN: [IN_POS, IN_NEG]
