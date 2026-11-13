@@ -1,13 +1,14 @@
 # Power system harness (work in progress)
-# Scope: battery -> PDB -> BECs. The PDB -> flight controller link lives in
-# flight_control_system.yaml.
+# Scope: battery -> PDB -> BECs, PDB ESC pads -> XT90 female at the wing split (VTOL motors), and
+# PDB ESC pad -> forward-thrust ESC (direct, no wing split).
+# The PDB -> flight controller link lives in flight_control_system.yaml.
 #
 # Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
 # Gauges and colors are recommendations, see the comment above each cable.
 
 metadata:
   title: Power system
-  description: Battery, PDB and BEC input wiring
+  description: Battery, PDB and BEC input wiring, plus VTOL motor power to the wing split and forward ESC power
 
 connectors:
 
@@ -87,6 +88,52 @@ connectors:
     notes: "Battery side of the PDB, across B+ and B-. Observe polarity."
     pinlabels: [CAP_POS, CAP_NEG]
 
+  # Wing split, fuselage side: one XT90 female per VTOL motor ESC. The wing side (XT90 male, then
+  # the ESC) is added with the actuators system. The ESC power pads sit on the battery bus, so
+  # these carry full battery voltage (50.4 V max) and the motor current.
+  # Synthetic pin IDs (the XT90 has no pin numbers); the housing is keyed, so polarity cannot
+  # be reversed.
+  # TODO: variant (plain XT90, XT90-S anti-spark or XT90H) and part number. Use one variant
+  # on both sides of the split. XT90 is rated for 90 A continuous: check against the real ESC
+  # peak current.
+  XT90_VTOL1_F:
+    type: XT90 female
+    subtype: female
+    manufacturer: Amass
+    notes: "VTOL motor 1 (front right) power, wing split (fuselage side)"
+    pinlabels: [POS, NEG]
+
+  XT90_VTOL2_F:
+    type: XT90 female
+    subtype: female
+    manufacturer: Amass
+    notes: "VTOL motor 2 (rear left) power, wing split (fuselage side)"
+    pinlabels: [POS, NEG]
+
+  XT90_VTOL3_F:
+    type: XT90 female
+    subtype: female
+    manufacturer: Amass
+    notes: "VTOL motor 3 (front left) power, wing split (fuselage side)"
+    pinlabels: [POS, NEG]
+
+  XT90_VTOL4_F:
+    type: XT90 female
+    subtype: female
+    manufacturer: Amass
+    notes: "VTOL motor 4 (rear right) power, wing split (fuselage side)"
+    pinlabels: [POS, NEG]
+
+  # Forward-thrust ESC (APD 120F3, same ESC as the VTOL motors), battery input pads (+ and -).
+  # It sits in the fuselage, so it is wired straight from the PDB pads with no wing split.
+  # Its signal, capacitor and motor phase pads are in actuators_system.yaml. Pin IDs are synthetic.
+  # TODO: same 12S / 50 V check as the VTOL ESCs (see actuators_system.yaml).
+  ESC_FWD_IN:
+    type: Solder pads
+    notes: "Forward ESC battery input, + and -"
+    pinlabels: [IN_POS, IN_NEG]
+    ignore_in_bom: true
+
   # --- Parked (not used in this build) -------------------------------------------------
   # PDB on-board BEC header (J3, 2x7): four 5 V and three 12 V outputs. None of them is used:
   # the Cube is powered from the PDB 6-pin output (see flight_control_system.yaml) and the
@@ -149,6 +196,55 @@ cables:
     ignore_in_bom: true
     notes: "Capacitor leads, short as possible"
 
+  # PDB ESC pads -> XT90 female at the wing split, one cable per VTOL motor.
+  # 10 AWG (recommendation), same as the wing side (W_ACT_01 to W_ACT_04 in actuators_system.yaml).
+  # Motor current is about 16 A at 6 kg thrust and about 75-80 A at full throttle (Vector Technics
+  # 8020 PRO 120KV test table, 12S), so 10 AWG silicone wire is enough for a short run. Check that
+  # it fits the PDB solder pads and the XT90 solder cups.
+  # TODO: confirm with real lengths; go to 8 AWG if the run is long or hot.
+  W_PWR_05:
+    wirecount: 2
+    gauge: 10 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (PDB to wing split)
+    notes: "VTOL motor 1 (front right) power, PDB to wing split"
+
+  W_PWR_06:
+    wirecount: 2
+    gauge: 10 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (PDB to wing split)
+    notes: "VTOL motor 2 (rear left) power, PDB to wing split"
+
+  W_PWR_07:
+    wirecount: 2
+    gauge: 10 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (PDB to wing split)
+    notes: "VTOL motor 3 (front left) power, PDB to wing split"
+
+  W_PWR_08:
+    wirecount: 2
+    gauge: 10 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (PDB to wing split)
+    notes: "VTOL motor 4 (rear right) power, PDB to wing split"
+
+  # PDB ESC pad -> forward ESC battery input, direct.
+  # 10 AWG (recommendation), same as the VTOL motor cables. Expected current of the forward motor
+  # (Vector Technics VT4130 300KV, 18 inch propeller) is similar to the VTOL motors, up to about
+  # 80 A, which 10 AWG silicone wire handles over a short run.
+  # APD says to keep ESC input wires short (long wires cause voltage spikes when the motor
+  # brakes), and to add more capacitance if they are longer than 12 cm.
+  # TODO: confirm with the real length after layout analysis and the real current (the motor test
+  # data is for a smaller propeller).
+  W_PWR_09:
+    wirecount: 2
+    gauge: 10 AWG
+    colors: [RD, BK]
+    length: 0   # TODO: real length after layout analysis (PDB to forward ESC, keep it short)
+    notes: "Forward ESC power, PDB to ESC"
+
 connections:
 
   # Battery -> PDB: battery side not decided yet (connector, cable). TODO once chosen.
@@ -173,3 +269,26 @@ connections:
   - - PDB_ESC: [ESC8_POS, ESC8_NEG]
     - W_PWR_02: [1, 2]
     - BEC5V_IN: [IN_POS, IN_NEG]
+
+  # PDB ESC pads -> XT90 female at the wing split, VTOL motors 1 to 4 (ArduPilot Quad X default order:
+  # 1 front right, 2 rear left, 3 front left, 4 rear right; the ESC1 to ESC4 pad pairs follow the motor number).
+  # ESC1 to ESC4 pad pairs are assumed, so the pads are free for any other ESC later.
+  # TODO: match the pad numbers to the real motor positions (and spin directions) once decided.
+  - - PDB_ESC: [ESC1_POS, ESC1_NEG]
+    - W_PWR_05: [1, 2]
+    - XT90_VTOL1_F: [POS, NEG]
+  - - PDB_ESC: [ESC2_POS, ESC2_NEG]
+    - W_PWR_06: [1, 2]
+    - XT90_VTOL2_F: [POS, NEG]
+  - - PDB_ESC: [ESC3_POS, ESC3_NEG]
+    - W_PWR_07: [1, 2]
+    - XT90_VTOL3_F: [POS, NEG]
+  - - PDB_ESC: [ESC4_POS, ESC4_NEG]
+    - W_PWR_08: [1, 2]
+    - XT90_VTOL4_F: [POS, NEG]
+
+  # PDB ESC pad -> forward ESC. ESC5 pad pair is assumed (ESC1 to ESC4 are the VTOL motors,
+  # ESC7 and ESC8 the BECs).
+  - - PDB_ESC: [ESC5_POS, ESC5_NEG]
+    - W_PWR_09: [1, 2]
+    - ESC_FWD_IN: [IN_POS, IN_NEG]

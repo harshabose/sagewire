@@ -1,0 +1,110 @@
+# RF system harness (work in progress)
+# Scope: Doodle Labs Mesh Rider Mini (RM-1400-42M3, tag AIR): UART link from the Cube telemetry
+# port, the 5 V power port, the Ethernet port and the two antenna ports. Only the UART link is wired
+# for now. No video link yet. USB device, USB host and GPIO ports are not used.
+#
+# Port layout (datasheet, Doodle Labs mini-OEM connector descriptions): ports 1, 2, 3, 5 and 6 are
+# JST SM4B-GHS-TB (4 pin), port 4 is JST SM6B-GHS-TB (6 pin), antennas ANT 0 / ANT 1 are Molex
+# 73414-0100 MMCX female. The datasheet table lists port 2, 3, 5 and 6 as 6 pin; the module has 4.
+# Harness side: JST GHR-xxV-S housings with SSHL-002T-P0.2 crimp contacts (26 to 30 AWG, 1 A each).
+#
+# TODO: pin 1 position (and the pin numbering direction) on the module headers is not checked yet.
+# The pin tables are from Doodle's mini-OEM page; the RM-1400-42M3 datasheet lists the same ports
+# and part numbers, but confirm on the module.
+#
+# Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
+# Gauges and colors are recommendations, see the comment above each cable.
+
+metadata:
+  title: RF system
+  description: Mesh Rider Mini UART link from the Cube, power, Ethernet and antenna ports
+
+connectors:
+
+  # Cube Orange+ telemetry port, 6-pin: 1 VCC 5 V, 2 TX (out), 3 RX (in), 4 CTS, 5 RTS, 6 GND, all
+  # signals 3.3 V (same pin order as the GPS2 port in flight_control_system.yaml, standard Cube
+  # pinout). Only TX, RX and GND are used; the 5 V pin stays empty (the radio has its own supply)
+  # and the radio has no flow-control pins, so CTS and RTS stay empty too.
+  # TODO: choose TELEM1 or TELEM2 and move this connector to flight_control_system.yaml when that
+  # file gets its telemetry port. Plug series (the Cube end is a JST GH).
+  FC_TELEM:
+    type: 6-pin TELEM plug   # TODO: series
+    notes: "Cube Orange+ TELEM port (UART). Cube TX (pin 2) goes to the radio UART_RX, Cube RX (pin 3) to the radio UART_TX. 3.3 V logic."
+    pinlabels: [VCC, TX, RX, CTS, RTS, GND]
+    hide_disconnected_pins: true
+
+  # Radio port 3, UART + reset: pin 1 GND, 2 RESET (2.8 V, default high, pull low to reset),
+  # 3 UART_RX (input to the radio, 3.3 V), 4 UART_TX (output from the radio, 3.3 V).
+  # RESET stays empty. The mating housing is a 4-pin GHR-04V-S.
+  RF_P3:
+    type: JST GH 4-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-04V-S
+    notes: "Mesh Rider Mini port 3 (UART + reset), mates with SM4B-GHS-TB. Crimp contacts SSHL-002T-P0.2. RESET stays empty."
+    pinlabels: [GND, RESET, UART_RX, UART_TX]
+    hide_disconnected_pins: true
+
+  # Radio port 4, 5 V power: pins 1, 2, 3 are 5 V input and 4, 5, 6 are GND. All six pins must be
+  # used: one GH contact is only rated 1 A, and the radio draws about 5 W average and 8 W peak
+  # (about 1.6 A at 5 V). Supply is 5 V +/- 5 %.
+  # Not wired yet: the BEC is not decided. The mating housing is a 6-pin GHR-06V-S.
+  # TODO: when the BEC is chosen, tie the three 5 V wires together and the three GND wires
+  # together at the housing, and add a bulk capacitor close to the connector.
+  RF_P4:
+    type: JST GH 6-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-06V-S
+    notes: "Mesh Rider Mini port 4 (5 V power), mates with SM6B-GHS-TB. Crimp contacts SSHL-002T-P0.2. Use all six pins."
+    pinlabels: [5V_1, 5V_2, 5V_3, GND_4, GND_5, GND_6]
+
+  # Radio port 2, Ethernet (100 Base-T): pin 1 ETH1_RX_N, 2 ETH1_RX_P, 3 ETH1_TX_N, 4 ETH1_TX_P
+  # (directions are from the radio's side). Not wired for now (no video link yet).
+  # The mating housing is a 4-pin GHR-04V-S.
+  RF_P2:
+    type: JST GH 4-pin plug housing
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-04V-S
+    notes: "Mesh Rider Mini port 2 (Ethernet), mates with SM4B-GHS-TB. Crimp contacts SSHL-002T-P0.2. Not used yet."
+    pinlabels: [ETH_RX_N, ETH_RX_P, ETH_TX_N, ETH_TX_P]
+
+  # Antenna ports, MMCX female on the radio (Molex 73414-0100), so the antenna cable has an MMCX
+  # male plug here. 2x2 MIMO, so both ports are expected to be used. Not wired for now.
+  # TODO: antenna choice (must cover the band in use: 455 MHz and 2.2 to 2.5 GHz need different
+  # antennas), cable, and the MMCX plug part number.
+  RF_ANT0:
+    type: MMCX male plug   # TODO: part number
+    subtype: male
+    notes: "Mesh Rider Mini ANT 0, mates with the radio MMCX female. Center = RF signal, shield = ground."
+    pinlabels: [RF, GND]
+
+  RF_ANT1:
+    type: MMCX male plug   # TODO: part number
+    subtype: male
+    notes: "Mesh Rider Mini ANT 1, mates with the radio MMCX female. Center = RF signal, shield = ground."
+    pinlabels: [RF, GND]
+
+cables:
+
+  # Cube TELEM -> radio port 3. 3.3 V UART, so any thin wire does. 28 AWG sits inside the GH
+  # contact range (26 to 30 AWG). Colors: yellow = Cube TX to radio RX, green = Cube RX from
+  # radio TX, black = ground.
+  # TODO: shielded or twisted pair if the run turns out long or noisy (the radio is a 2.4 GHz
+  # transmitter), and the real baud rate on the Cube side.
+  W_RF_01:
+    wirecount: 3
+    gauge: 28 AWG
+    colors: [YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Cube TELEM to radio UART"
+
+connections:
+
+  # Cube TELEM -> radio port 3 (UART). Cube TX goes to the radio RX and Cube RX to the radio TX.
+  - - FC_TELEM: [TX, RX, GND]
+    - W_RF_01: [1, 2, 3]
+    - RF_P3: [UART_RX, UART_TX, GND]
+
+  # Not wired yet: RF_P4 (5 V, BEC not decided), RF_P2 (Ethernet) and RF_ANT0 / RF_ANT1.
