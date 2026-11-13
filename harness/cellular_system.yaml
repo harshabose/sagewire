@@ -1,7 +1,9 @@
 # Cellular system harness (work in progress)
 # Scope so far: Jetson power input (XT30, nothing connected, source not decided) and the
-# SIYI A2-MINI Ethernet link: camera 7-pin port -> our cable -> RJ45 plug -> Jetson Ethernet port.
-# The camera 12 V and GND are not wired yet (12 V source not decided).
+# SIYI A8-MINI camera: Ethernet link (camera Video & Protocol port -> our cable -> RJ45 plug ->
+# Jetson Ethernet port) and the power port (4 wires -> XT30 male, mated to an XT30 female that is
+# left unconnected, because the BEC architecture is not decided).
+# Only the A8-MINI Ethernet and Power ports are used; the Gimbal Control (S.BUS) port is not wired.
 # Also: two Waveshare 5G dongles to the Jetson over USB 2.0 (D+, D-, GND; VBUS not wired yet).
 # Coming next: the UART link from the Cube telemetry port.
 #
@@ -22,37 +24,67 @@ connectors:
     notes: "Jetson power input. Source not decided, left unconnected."
     pinlabels: [VIN, GND]
 
-  # ---- SIYI A2-MINI camera (tag A2M). Defined only, nothing wired to it yet. ------------------
-  # Network port: SIYI's FAQ says GH, 1.25 mm pitch. 7 pins, in the wire order of the SIYI
-  # connector diagram. TX and RX are assumed to be named from the camera side. 12 V supply
-  # (average 2 W, peak 12 W). Ethernet is two twisted pairs (TX+/TX-, RX+/RX-).
-  # The PWM pin is a gimbal pitch input and is not needed when the Jetson controls the camera
-  # over Ethernet.
-  # TODO: plug or socket, exact part numbers, and where pin 1 is. The SIYI manual pinout is a picture.
-  A2M_NET:
-    type: JST GH 7-pin   # 1.25 mm pitch, per SIYI FAQ
-    notes: "A2-MINI network port. 12 V supply, 10/100 Ethernet pairs, PWM. Default camera IP 192.168.144.25."
-    pinlabels: ["12V", GND, TX+, TX-, RX+, RX-, PWM]
+  # ---- SIYI A8-MINI camera (tag A8M). -----------------------------------------------------------
+  # The camera has three ports (SIYI diagram): Video & Protocol (9 pins), Gimbal Control (S.BUS,
+  # not used here) and Power (4 pins). Only the Video & Protocol port (Ethernet pairs only) and
+  # the Power port are wired.
+  #
+  # Video & Protocol port, pins in the order of the SIYI diagram: DP, DM, RX-, RX+, TX-, TX+, GND,
+  # IO, NC. TX and RX are named from the camera side. Only the four Ethernet pins are wired
+  # (two twisted pairs, TX+/TX- and RX+/RX-); DP, DM (USB), GND, IO and NC stay empty.
+  # The camera cable photo shows the wire order black, red, white, yellow on pins 3 to 6, which is
+  # RX-, RX+, TX-, TX+ in the diagram order.
+  # TODO: housing series (the A2-MINI used a GH 1.25 mm, check the A8-MINI), plug or socket, part
+  # numbers, and which end is pin 1. The pin numbers below follow the diagram left to right.
+  A8M_NET:
+    type: 9-pin housing   # TODO: series
+    notes: "A8-MINI Video and Protocol port, Ethernet pins only (10/100). Default camera IP 192.168.144.25."
+    pinlabels: [DP, DM, RX-, RX+, TX-, TX+, GND, IO, NC]
+    hide_disconnected_pins: true
 
-  # S.BUS control lead: black servo-style housing with two wires (GND and S.BUS). Optional
-  # control input, not used here.
-  # TODO: the photo shows a 3-position housing with 2 wires; check which positions are filled.
-  A2M_SBUS:
-    type: Servo-style housing   # series and pitch not confirmed
-    notes: "A2-MINI S.BUS lead. Unused, left unconnected."
-    pinlabels: [GND, S.BUS]
+  # Power port, pins in the order of the SIYI diagram: GND, GND, 3S-6S, 3S-6S. Both pins of each
+  # pair are wired. The input is a 3S to 6S battery range, NOT 5 V, and not the 12S pack either: it
+  # must come from a BEC (not decided yet, see the XT30 pair below).
+  # TODO: housing series and part number, which end is pin 1, and the exact voltage range and
+  # power draw from the SIYI A8-MINI datasheet.
+  A8M_PWR:
+    type: 4-pin housing   # TODO: series
+    notes: "A8-MINI power port: 2 x power (3S-6S) and 2 x GND. All four pins wired."
+    pinlabels: [GND_1, GND_2, VIN_1, VIN_2]
+
+  # XT30 pair on the camera power lead. The male is on the camera cable; the female is the BEC
+  # side and is left with nothing wired because the BEC architecture is not decided. Pin IDs are
+  # synthetic (the XT30 has no pin numbers); the housing is keyed, so polarity cannot be reversed.
+  # TODO: variant (plain XT30, XT30U, XT30PW) and part numbers; the XT30 contact takes the two
+  # paralleled 26 AWG wires per polarity (check the solder cup size).
+  A8M_XT30_M:
+    type: XT30 male
+    subtype: male
+    manufacturer: Amass
+    notes: "A8-MINI power lead, XT30 male. Mates with A8M_XT30_F."
+    pinlabels: [POS, NEG]
+
+  A8M_XT30_F:
+    type: XT30 female
+    subtype: female
+    manufacturer: Amass
+    notes: "A8-MINI power, XT30 female (BEC side). Nothing wired to it yet: BEC architecture not decided."
+    pinlabels: [POS, NEG]
 
   # ---- Camera cable RJ45 plug, and the Jetson Ethernet port it plugs into ---------------------
-  # The 7-pin camera port is converted to an RJ45 by our own cable (W_CEL_01). That RJ45 plug
-  # (A2M_RJ45) then plugs into the Ethernet port on the Jetson board (JET_ETH). The camera
+  # The camera Ethernet pins are converted to an RJ45 by our own cable (W_CEL_01). That RJ45 plug
+  # (A8M_RJ45) then plugs into the Ethernet port on the Jetson board (JET_ETH). The camera
   # connects straight to the Jetson, no switch. The Jetson runs its own DHCP server.
   # Pin numbers and names on both are the standard RJ45 (T568) ones as seen by the Jetson, an
   # ordinary network port: pins 1/2 = Jetson TX+/TX-, pins 3/6 = Jetson RX+/RX-.
+  # So the RJ45 labels are from the Jetson side and the camera pin names are from the camera side:
+  # the pairs cross over. Camera RX+ (red in the cable photo) lands on RJ45 pin 1, RX- (black)
+  # on pin 2, TX+ (yellow) on pin 3 and TX- (white) on pin 6; pins 4, 5, 7, 8 are empty.
   # Pins 4, 5, 7, 8 are only used for gigabit and are not needed for the 10/100 camera.
-  A2M_RJ45:
+  A8M_RJ45:
     type: RJ45 plug (8P8C)
     subtype: male
-    notes: "Plug on the A2-MINI cable, into the Jetson Ethernet port. Pins 4, 5, 7, 8 unused (camera is 10/100)."
+    notes: "Plug on the A8-MINI cable, into the Jetson Ethernet port. Pins 4, 5, 7, 8 unused (camera is 10/100)."
     pinlabels: [TX+, TX-, RX+, NC, NC, RX-, NC, NC]
     hide_disconnected_pins: true
 
@@ -133,7 +165,19 @@ cables:
     gauge: 26 AWG
     colors: [WHOG, OG, WHGN, GN]
     length: 0   # TODO: set after layout
-    notes: "A2-MINI 7-pin port to RJ45 plug. Two twisted pairs, crossover wiring (see comments)."
+    notes: "A8-MINI Ethernet pins to RJ45 plug. Two twisted pairs, crossover wiring (see comments)."
+
+  # A8-MINI power port -> XT30 male. Two wires per polarity, one per power-port pin: the red pair
+  # to the two power pins, the black pair to the two GND pins, each pair joined at the XT30 pin.
+  # The load is well under 1 A in total. 26 AWG is a placeholder (the port housing is not
+  # chosen yet, a GH contact takes 26 to 30 AWG).
+  # TODO: gauge once the housing series is known, and length after layout.
+  W_CEL_04:
+    wirecount: 4
+    gauge: 26 AWG
+    colors: [RD, RD, BK, BK]
+    length: 0   # TODO: set after layout
+    notes: "A8-MINI power port to XT30 male. Wires 1, 2 = power (red), 3, 4 = GND (black)."
 
   # Dongle 1 to Jetson. Standard USB 2.0 colours: white = D-, green = D+, black = GND.
   # Keep D- and D+ twisted together. VBUS (red) is not wired yet.
@@ -158,23 +202,36 @@ cables:
 connections:
 
   # Camera TX goes to the Jetson RX and camera RX goes to the Jetson TX (crossover).
-  # Camera pin names are assumed to be from the camera side (SIYI diagram, see A2M_NET).
+  # Camera pin names are assumed to be from the camera side (SIYI diagram, see A8M_NET).
   # If SIYI named them from the other side, the Jetson port should still link up (automatic
   # crossover correction in its Ethernet chip); TODO: confirm for the actual Jetson board.
   # What must never change: each pair stays together (camera TX+ with TX-, camera RX+ with RX-).
-  # The camera 12 V, GND and PWM (and the S.BUS lead) are not part of this cable. The 12 V and
-  # GND go to a 12 V rail that is not decided yet, so those pins stay open for now.
-  # Step 1: camera 7-pin port to the RJ45 plug, through our cable.
+  # Step 1: camera Ethernet pins to the RJ45 plug, through our cable.
   -
-    - A2M_NET: [5, 6, 3, 4]     # RX+, RX-, TX+, TX-
+    - A8M_NET: [RX+, RX-, TX+, TX-]
     - W_CEL_01: [1, 2, 3, 4]
-    - A2M_RJ45: [1, 2, 3, 6]    # TX+, TX-, RX+, RX-
+    - A8M_RJ45: [1, 2, 3, 6]    # TX+, TX-, RX+, RX- (Jetson side names)
 
   # Step 2: the RJ45 plug mates with the Jetson Ethernet port, pin for pin (straight through).
   -
-    - A2M_RJ45: [1, 2, 3, 6]
+    - A8M_RJ45: [1, 2, 3, 6]
     - -->
     - JET_ETH: [1, 2, 3, 6]
+
+  # Camera power: the two power pins and the two GND pins go to the XT30 male (two wires land on
+  # each XT30 pin).
+  -
+    - A8M_PWR: [VIN_1, VIN_2, GND_1, GND_2]
+    - W_CEL_04: [1, 2, 3, 4]
+    - A8M_XT30_M: [POS, POS, NEG, NEG]
+
+  # The XT30 female mates into the XT30 male, pin for pin (1 = POS, 2 = NEG; a mate needs pin
+  # numbers, not labels). Nothing else is connected to the female: the BEC architecture is not
+  # decided yet.
+  -
+    - A8M_XT30_F: [1, 2]
+    - -->
+    - A8M_XT30_M: [1, 2]
 
   # Dongle 1: dongle plug mates with our jack, the cable runs to our plug, which mates with the Jetson jack.
   -

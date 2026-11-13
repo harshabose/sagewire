@@ -4,16 +4,21 @@
 # (XT90 male on the wing side, APD 120F3 ESC, Vector Technics 8020 PRO 120KV motor), plus the
 # forward-thrust ESC and motor.
 # The fuselage side (PDB ESC pads -> XT90 female) lives in power_system.yaml. The ESC signal (T, S)
-# wiring is in the wing split section; the capacitor wiring is not added yet.
+# wiring is in the wing split section. The two input capacitors that come in each ESC box (not
+# installed) are soldered with their own legs straight onto the ESC capacitor pads (CAP_xxx_A and
+# CAP_xxx_B, cables W_ACT_32 to W_ACT_41); their spec is not in the APD docs.
 # The forward-thrust ESC (same APD 120F3) is wired to the PDB in power_system.yaml (ESC_FWD_IN);
 # its signal, capacitor and motor phase pads are here (ESC_FWD_SIG, ESC_FWD_CAP, ESC_FWD_PH), and
 # the motor is a Vector Technics VT4130 300KV with an 18 inch propeller.
 # The wing split signal connectors (DB-25, one pair per wing), the wing servos, the wing LEDs and the
 # CAN splitter ports are at the end of the connectors section. They are wired with NO SHARING: every
 # servo, LED and ESC signal link has its own power, ground and signal pins through the DB-25, and
-# every servo has its own CAN pair to its own port on the passive CAN splitter. The DB-25 pin order
+# every servo has its own CAN pair plus a GND wire to its own port on the passive CAN splitter
+# (ports 2 to 5; port 1, the Cube link, is in flight_control_system.yaml). The servo end of each wing
+# cable is an M5 male plug that mates with the servo's own M5 lead. The DB-25 pin order
 # below is provisional (not fixed yet). The fuselage side sources (12 V, 5 V, Cube outputs) are not
-# modelled yet, so those fuselage pins only show the mate to the wing side.
+# modelled yet, so those fuselage pins only show the mate to the wing side, apart from the CAN
+# and GND wires to the splitter.
 #
 # Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
 # Gauges and colors are recommendations, see the comment above each cable.
@@ -64,9 +69,13 @@ connectors:
   # TODO: the pad picture was of the F3[X] board; confirm the 120F3 pad layout is the same.
   # TODO: the 120F3[X] is sold as a 12S, 50 V ESC, but a fully charged 12S pack is 50.4 V (more
   # for LiHV), and braking spikes add to that. Check the APD datasheet for the real maximum.
-  # TODO: APD asks for a capacitor on the ESC pads (330 uF to 1000 uF, low ESR) and more
-  # whenever the input wiring is longer than 12 cm. It will be longer here (wing split). Use a
-  # voltage rating well above 50.4 V (not 50 V), e.g. 63 V or more.
+  # Capacitors: each 120F3 box has 2 input capacitors (not installed), modelled further down as
+  # CAP_xxx_A and CAP_xxx_B. APD says that if the ESC is more than 12 cm from the power source an
+  # additional capacitor is needed on top of the included ones (2 or 3 extra for high current;
+  # Panasonic FM/FS or Rubycon ZLJ). The wing ESCs will be over 12 cm (wing split).
+  # TODO: the value and voltage of the included capacitors are not in the APD docs. Read the
+  # markings on them: the voltage must be well above 50.4 V (not 50 V). Then decide the extra
+  # capacitors for the long input leads.
   #
   # Battery input pads (+ and -, the two large pads).
   ESC_VTOL1_IN:
@@ -180,7 +189,9 @@ connectors:
     ignore_in_bom: true
 
   # Capacitor pads (+ and -, marked "Capacitor Mounting Position" on the board, at the top edge).
-  # The capacitor itself is added later (count and type not decided yet).
+  # The two capacitors from the ESC box are soldered straight onto these pads with their own legs
+  # (CAP_VTOL1_A and CAP_VTOL1_B, both on the same pad pair, in parallel). Extra capacitors for
+  # the long input leads are not added yet.
   ESC_VTOL1_CAP:
     type: Solder pads
     notes: "VTOL motor 1 (front right) ESC capacitor pads, + and -. Observe polarity."
@@ -214,8 +225,8 @@ connectors:
     pinlabels: [T, S, SIG_GND]
     ignore_in_bom: true
 
-  # Capacitor pads (+ and -). The capacitor is added later (count and type not decided yet);
-  # same capacitor notes as the VTOL ESCs apply.
+  # Capacitor pads (+ and -). The two capacitors from the ESC box are soldered straight onto them
+  # with their own legs (CAP_FWD_A and CAP_FWD_B); same capacitor notes as the VTOL ESCs apply.
   ESC_FWD_CAP:
     type: Solder pads
     notes: "Forward ESC capacitor pads, + and -. Observe polarity."
@@ -240,6 +251,71 @@ connectors:
     manufacturer: Vector Technics
     notes: "Forward motor: VT4130 300KV, 18 inch propeller"
     pinlabels: [PH_A, PH_B, PH_C]
+    ignore_in_bom: true
+
+  # ---- ESC input capacitors from the box (2 per ESC) -----------------------------------
+  # Each APD 120F3 ships with 2 input capacitors, not installed. They belong to the ESC, so nothing
+  # goes in the BOM. The spec (value, voltage) is not in the APD docs; read it off the capacitor.
+  # Polarity: the positive leg is the longer one, the negative side has the grey stripe on the body.
+  # Legs as short as possible (APD).
+  CAP_VTOL1_A:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 1 (front right) ESC input capacitor 1 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL1_B:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 1 (front right) ESC input capacitor 2 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL2_A:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 2 (rear left) ESC input capacitor 1 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL2_B:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 2 (rear left) ESC input capacitor 2 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL3_A:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 3 (front left) ESC input capacitor 1 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL3_B:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 3 (front left) ESC input capacitor 2 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL4_A:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 4 (rear right) ESC input capacitor 1 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_VTOL4_B:
+    type: Electrolytic capacitor (spec not known)
+    notes: "VTOL motor 4 (rear right) ESC input capacitor 2 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_FWD_A:
+    type: Electrolytic capacitor (spec not known)
+    notes: "Forward ESC input capacitor 1 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
+    ignore_in_bom: true
+
+  CAP_FWD_B:
+    type: Electrolytic capacitor (spec not known)
+    notes: "Forward ESC input capacitor 2 of 2, from the ESC box"
+    pinlabels: [CAP_POS, CAP_NEG]
     ignore_in_bom: true
 
   # ==== Wing split (DB-25) and wing consumers ============================================
@@ -303,9 +379,8 @@ connectors:
   # 10, "M5 Wire"). DroneCAN pin definition: 1 power +, 2 power GND, 3 CAN High, 4 CAN Low.
   # Seen from the mating face the contacts are 3 top left, 4 top right, 2 bottom left, 1 bottom
   # right, with the key at the bottom. Rated 12 V (7 to 15 V); rated current 0.7 A, stall 1.3 A,
-  # peak 2.2 A each. The lead belongs to the servo, so nothing goes in the BOM.
-  # TODO: the mating M5 male plug (cable end) for the wing harness, and its part number (the
-  # cables below end directly on these pins for now). The termination decisions are open (see docs).
+  # peak 2.2 A each. The lead belongs to the servo, so nothing goes in the BOM. The mating M5 male
+  # plug on the wing cable is SRV_xx_M below.
   SRV_L1:
     type: M5 waterproof 4-pin female (servo lead)
     subtype: female
@@ -337,6 +412,37 @@ connectors:
     notes: "Z1500-12V DroneCAN servo, right wing servo 2. 12 V, 0.7 A rated, 2.2 A peak."
     pinlabels: [V_POS, GND, CAN_H, CAN_L]
     ignore_in_bom: true
+
+  # M5 waterproof 4-pin male plug on the wing cable, one per servo. It mates with the servo's own
+  # M5 female lead (SRV_xx above), pin for pin: 1 power +, 2 power GND, 3 CAN High, 4 CAN Low
+  # (same numbering as the servo lead, datasheet page 10). The plug is bought, so it is in the BOM.
+  # All four wires into the plug are 26 AWG (W_ACT_10 to W_ACT_13 and W_ACT_19 to W_ACT_22), chosen
+  # to fit a small M5 solder cup (usually about 24 AWG or thinner).
+  # TODO: part number, contact type (solder cup is usual) and the wire range it accepts. Also check
+  # the plug's pin current rating against the 2.2 A servo peak.
+  SRV_L1_M:
+    type: M5 waterproof 4-pin male plug (cable end)
+    subtype: male
+    notes: "M5 male plug on the left wing servo 1 cable. Mates with the servo lead SRV_L1."
+    pinlabels: [V_POS, GND, CAN_H, CAN_L]
+
+  SRV_L2_M:
+    type: M5 waterproof 4-pin male plug (cable end)
+    subtype: male
+    notes: "M5 male plug on the left wing servo 2 cable. Mates with the servo lead SRV_L2."
+    pinlabels: [V_POS, GND, CAN_H, CAN_L]
+
+  SRV_R1_M:
+    type: M5 waterproof 4-pin male plug (cable end)
+    subtype: male
+    notes: "M5 male plug on the right wing servo 1 cable. Mates with the servo lead SRV_R1."
+    pinlabels: [V_POS, GND, CAN_H, CAN_L]
+
+  SRV_R2_M:
+    type: M5 waterproof 4-pin male plug (cable end)
+    subtype: male
+    notes: "M5 male plug on the right wing servo 2 cable. Mates with the servo lead SRV_R2."
+    pinlabels: [V_POS, GND, CAN_H, CAN_L]
 
   # Teravolt StrobeIT-Pro (two per wing) and StrobeIT (wingtip, one per wing). Both have a
   # standard 3-pin servo-style interface on three solder pads: 5 V input (1 A max), PWM signal,
@@ -390,27 +496,21 @@ connectors:
   # CAN splitter: SwiftWing 6-port passive splitter, JST-GH 4-pin ports. All ports are bussed in
   # parallel inside the splitter (pin 1 = +5 V, 2 = CAN_H, 3 = CAN_L, 4 = GND on every port); it has
   # no termination and no isolation. Each port is modelled as its own connector (harness side
-  # housing). Port 1 goes to the Cube CAN port (not wired here, flight_control_system.yaml comes
-  # later); ports 2 to 5 take one servo each (no sharing); port 6 is spare. Which physical port is
-  # which does not matter, they are all the same net.
+  # housing). Port 1 goes to the Cube CAN2 port and is modelled in flight_control_system.yaml
+  # (CAN_SPL_P1), so it is not defined here; ports 2 to 5 take one servo each (no sharing); port 6
+  # is spare. Which physical port is which does not matter, they are all the same net.
   # WARNING: the splitter pin 1 is 5 V and bussed. The servos have 12 V on their pin 1, so the servo
-  # branches use only CAN_H and CAN_L: pin 1 stays empty on ports 2 to 5, and pin 4 (GND) too, since
-  # the servo ground returns on the power wires and a second ground path would only add a loop.
-  # TODO: 120 ohm termination at the two ends of the bus is not modelled yet (the Cube end and the
-  # last servo, or the Cube's own). Do the servos have a built-in 120 ohm? The sheets do not say.
-  # Measure CAN_H to CAN_L on an unpowered servo. With no sharing the bus is a star, so the stubs
-  # (wing half-span plus fuselage run) are far over the 0.3 m rule of thumb; lower the bitrate if
-  # the servos allow it.
+  # branches use only CAN_H, CAN_L and GND: pin 1 stays empty on ports 2 to 5. The GND wire is the
+  # same DB-25 pin as the servo power GND, so once the 12 V supply is wired the servo return current
+  # has two paths (the power wire and, through the splitter GND, the Cube); keep that in mind.
+  # WARNING: the servos have a built-in 120 ohm termination (docs/CAN Termination for Servos.md).
+  # On a bussed splitter all four are in parallel (30 ohm) on top of the Cube's own 120 ohm, which
+  # is far below the 60 ohm of a correctly terminated bus. TODO: switch off the termination on
+  # three servos (or all four, since the Cube end is terminated) if they allow it; otherwise this
+  # needs a rethink. With no sharing the bus is a star, so the stubs (wing half-span plus fuselage
+  # run) are far over the 0.3 m rule of thumb; lower the bitrate if the servos allow it.
   # TODO: GH housing part number and contact type (GHR-04V-S with SSHL-002T-P0.2 for 26 AWG), and
   # confirm that the splitter ports are SM04B-GHS-TB headers.
-  CAN_SPL_P1:
-    type: JST GH 4-pin
-    subtype: female
-    manufacturer: JST
-    mpn: GHR-04V-S
-    notes: "CAN splitter port 1 (passive, bussed): Cube CAN port"
-    pinlabels: [VCC_5V, CAN_H, CAN_L, GND]
-
   CAN_SPL_P2:
     type: JST GH 4-pin
     subtype: female
@@ -527,16 +627,21 @@ cables:
     notes: "Forward motor phase leads"
 
   # ---- Wing split, no sharing ----------------------------------------------------------
-  # Wing side: DB-25 plug -> servo, LED and ESC signal pads (one cable per link).
-  # Power and LED wires: 22 AWG (servo peak 2.2 A, LED 0.8 A peak; the run to the far servo may be a
-  # few metres, and 24 AWG would drop about 1 V at the servo peak over 3 m one way).
-  # Signal and CAN wires: 26 AWG (the servo lead itself is 26 AWG, and GH contacts take 26 AWG at most).
+  # Wing side: DB-25 plug -> servo M5 plug, LED and ESC signal pads (one cable per link).
+  # LED wires: 22 AWG (LED 0.8 A peak; the run may be a few metres).
+  # Servo power, signal and CAN wires: 26 AWG. The servo power wires are 26 AWG so they fit the M5
+  # plug solder cups (the servo lead itself is 26 AWG, and GH contacts take 26 AWG at most). The
+  # cost is voltage drop, see the comment above each servo power cable.
   # Colors: servo CAN_H yellow, CAN_L green; ESC T yellow, S white, signal GND black; LED 5 V red,
   # signal white, GND black.
   # TODO: twisted pair for CAN and for each ESC T/S/GND trio (APD: signal GND twisted with the signal).
+  # Servo power, 26 AWG: voltage drop. 26 AWG is about 0.13 ohm per metre, so over 3 m one way (6 m
+  # loop) the 2.2 A servo peak drops about 1.8 V and the 0.7 A rated current about 0.6 V. The servo
+  # takes 7 to 15 V and is fed 12 V, so check that the supply and the real wire length leave enough
+  # margin; shorten the run or raise the supply voltage if not.
   W_ACT_10:
     wirecount: 2
-    gauge: 22 AWG
+    gauge: 26 AWG
     colors: [RD, BK]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Left wing servo 1 power: 12 V and GND, wing plug to servo"
@@ -546,9 +651,10 @@ cables:
     colors: [YE, GN]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Left wing servo 1 CAN pair, wing plug to servo (twisted pair)"
+  # Servo power, 26 AWG: voltage drop is about 1.8 V at the 2.2 A peak over a 3 m run one way (see W_ACT_10).
   W_ACT_12:
     wirecount: 2
-    gauge: 22 AWG
+    gauge: 26 AWG
     colors: [RD, BK]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Left wing servo 2 power: 12 V and GND, wing plug to servo"
@@ -588,9 +694,10 @@ cables:
     colors: [YE, WH, BK]
     length: 0   # TODO: real length after layout analysis (wing plug to ESC)
     notes: "Left wing ESC 2 (aft boom, VTOL motor 2, rear left) signal: T, S, signal GND, wing plug to ESC"
+  # Servo power, 26 AWG: voltage drop is about 1.8 V at the 2.2 A peak over a 3 m run one way (see W_ACT_10).
   W_ACT_19:
     wirecount: 2
-    gauge: 22 AWG
+    gauge: 26 AWG
     colors: [RD, BK]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Right wing servo 1 power: 12 V and GND, wing plug to servo"
@@ -600,9 +707,10 @@ cables:
     colors: [YE, GN]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Right wing servo 1 CAN pair, wing plug to servo (twisted pair)"
+  # Servo power, 26 AWG: voltage drop is about 1.8 V at the 2.2 A peak over a 3 m run one way (see W_ACT_10).
   W_ACT_21:
     wirecount: 2
-    gauge: 22 AWG
+    gauge: 26 AWG
     colors: [RD, BK]
     length: 0   # TODO: real length after layout analysis (wing plug to servo)
     notes: "Right wing servo 2 power: 12 V and GND, wing plug to servo"
@@ -643,32 +751,101 @@ cables:
     length: 0   # TODO: real length after layout analysis (wing plug to ESC)
     notes: "Right wing ESC 2 (aft boom, VTOL motor 4, rear right) signal: T, S, signal GND, wing plug to ESC"
 
-  # Fuselage side: DB-25 socket CAN pair of each servo -> its own port on the CAN splitter.
-  # CAN_H and CAN_L only (no 5 V, no GND), see the splitter warning in the connectors section.
+  # Fuselage side: DB-25 socket CAN_H, CAN_L and GND of each servo -> its own port on the CAN
+  # splitter (GH housing pins 2, 3, 4). No 5 V (pin 1 stays empty), see the splitter warnings in
+  # the connectors section. The servo power (12 V) is not wired on the fuselage side yet.
+  # Colors: CAN_H yellow, CAN_L green, GND black. Twist CAN_H with CAN_L.
   W_ACT_28:
-    wirecount: 2
+    wirecount: 3
     gauge: 26 AWG
-    colors: [YE, GN]
+    colors: [YE, GN, BK]
     length: 0   # TODO: real length after layout analysis (fuselage DB-25 to splitter)
-    notes: "Left wing servo 1 CAN pair, fuselage DB-25 to CAN splitter (twisted pair)"
+    notes: "Left wing servo 1 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)"
   W_ACT_29:
-    wirecount: 2
+    wirecount: 3
     gauge: 26 AWG
-    colors: [YE, GN]
+    colors: [YE, GN, BK]
     length: 0   # TODO: real length after layout analysis (fuselage DB-25 to splitter)
-    notes: "Left wing servo 2 CAN pair, fuselage DB-25 to CAN splitter (twisted pair)"
+    notes: "Left wing servo 2 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)"
   W_ACT_30:
-    wirecount: 2
+    wirecount: 3
     gauge: 26 AWG
-    colors: [YE, GN]
+    colors: [YE, GN, BK]
     length: 0   # TODO: real length after layout analysis (fuselage DB-25 to splitter)
-    notes: "Right wing servo 1 CAN pair, fuselage DB-25 to CAN splitter (twisted pair)"
+    notes: "Right wing servo 1 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)"
   W_ACT_31:
-    wirecount: 2
+    wirecount: 3
     gauge: 26 AWG
-    colors: [YE, GN]
+    colors: [YE, GN, BK]
     length: 0   # TODO: real length after layout analysis (fuselage DB-25 to splitter)
-    notes: "Right wing servo 2 CAN pair, fuselage DB-25 to CAN splitter (twisted pair)"
+    notes: "Right wing servo 2 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)"
+
+  # ---- ESC input capacitors: direct capacitor legs soldered to the ESC pads ----------------
+  # These are not real cables: the capacitor's own legs go straight onto the exposed copper of the
+  # ESC capacitor pads, so nothing goes in the BOM. Colors only tell the legs apart (red = positive,
+  # the longer leg; black = negative, the grey stripe side). Keep the legs as short as possible and
+  # fold them close to the body (APD).
+  # TODO: real leg length (a few mm).
+  W_ACT_32:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 1 (front right) ESC, capacitor 1 of 2"
+  W_ACT_33:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 1 (front right) ESC, capacitor 2 of 2"
+  W_ACT_34:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 2 (rear left) ESC, capacitor 1 of 2"
+  W_ACT_35:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 2 (rear left) ESC, capacitor 2 of 2"
+  W_ACT_36:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 3 (front left) ESC, capacitor 1 of 2"
+  W_ACT_37:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 3 (front left) ESC, capacitor 2 of 2"
+  W_ACT_38:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 4 (rear right) ESC, capacitor 1 of 2"
+  W_ACT_39:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: VTOL motor 4 (rear right) ESC, capacitor 2 of 2"
+  W_ACT_40:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: forward ESC, capacitor 1 of 2"
+  W_ACT_41:
+    wirecount: 2
+    colors: [RD, BK]
+    length: 0
+    ignore_in_bom: true
+    notes: "Direct capacitor legs soldered: forward ESC, capacitor 2 of 2"
 
 connections:
 
@@ -720,19 +897,27 @@ connections:
   -
     - SPLIT_L_WING: [SRV1_VPOS, SRV1_GND]
     - W_ACT_10: [1, 2]
-    - SRV_L1: [V_POS, GND]
+    - SRV_L1_M: [V_POS, GND]
   -
     - SPLIT_L_WING: [SRV1_CANH, SRV1_CANL]
     - W_ACT_11: [1, 2]
-    - SRV_L1: [CAN_H, CAN_L]
+    - SRV_L1_M: [CAN_H, CAN_L]
+  -
+    - SRV_L1_M: [1, 2, 3, 4]
+    - -->
+    - SRV_L1: [1, 2, 3, 4]
   -
     - SPLIT_L_WING: [SRV2_VPOS, SRV2_GND]
     - W_ACT_12: [1, 2]
-    - SRV_L2: [V_POS, GND]
+    - SRV_L2_M: [V_POS, GND]
   -
     - SPLIT_L_WING: [SRV2_CANH, SRV2_CANL]
     - W_ACT_13: [1, 2]
-    - SRV_L2: [CAN_H, CAN_L]
+    - SRV_L2_M: [CAN_H, CAN_L]
+  -
+    - SRV_L2_M: [1, 2, 3, 4]
+    - -->
+    - SRV_L2: [1, 2, 3, 4]
   -
     - SPLIT_L_WING: [LED1_5V, LED1_SIG, LED1_GND]
     - W_ACT_14: [1, 2, 3]
@@ -754,13 +939,13 @@ connections:
     - W_ACT_18: [1, 2, 3]
     - ESC_VTOL2_SIG: [T, S, SIG_GND]
   -
-    - SPLIT_L_FUS: [SRV1_CANH, SRV1_CANL]
-    - W_ACT_28: [1, 2]
-    - CAN_SPL_P2: [CAN_H, CAN_L]
+    - SPLIT_L_FUS: [SRV1_CANH, SRV1_CANL, SRV1_GND]
+    - W_ACT_28: [1, 2, 3]
+    - CAN_SPL_P2: [CAN_H, CAN_L, GND]
   -
-    - SPLIT_L_FUS: [SRV2_CANH, SRV2_CANL]
-    - W_ACT_29: [1, 2]
-    - CAN_SPL_P3: [CAN_H, CAN_L]
+    - SPLIT_L_FUS: [SRV2_CANH, SRV2_CANL, SRV2_GND]
+    - W_ACT_29: [1, 2, 3]
+    - CAN_SPL_P3: [CAN_H, CAN_L, GND]
 
   # Right wing
   -
@@ -770,19 +955,27 @@ connections:
   -
     - SPLIT_R_WING: [SRV1_VPOS, SRV1_GND]
     - W_ACT_19: [1, 2]
-    - SRV_R1: [V_POS, GND]
+    - SRV_R1_M: [V_POS, GND]
   -
     - SPLIT_R_WING: [SRV1_CANH, SRV1_CANL]
     - W_ACT_20: [1, 2]
-    - SRV_R1: [CAN_H, CAN_L]
+    - SRV_R1_M: [CAN_H, CAN_L]
+  -
+    - SRV_R1_M: [1, 2, 3, 4]
+    - -->
+    - SRV_R1: [1, 2, 3, 4]
   -
     - SPLIT_R_WING: [SRV2_VPOS, SRV2_GND]
     - W_ACT_21: [1, 2]
-    - SRV_R2: [V_POS, GND]
+    - SRV_R2_M: [V_POS, GND]
   -
     - SPLIT_R_WING: [SRV2_CANH, SRV2_CANL]
     - W_ACT_22: [1, 2]
-    - SRV_R2: [CAN_H, CAN_L]
+    - SRV_R2_M: [CAN_H, CAN_L]
+  -
+    - SRV_R2_M: [1, 2, 3, 4]
+    - -->
+    - SRV_R2: [1, 2, 3, 4]
   -
     - SPLIT_R_WING: [LED1_5V, LED1_SIG, LED1_GND]
     - W_ACT_23: [1, 2, 3]
@@ -804,10 +997,44 @@ connections:
     - W_ACT_27: [1, 2, 3]
     - ESC_VTOL4_SIG: [T, S, SIG_GND]
   -
-    - SPLIT_R_FUS: [SRV1_CANH, SRV1_CANL]
-    - W_ACT_30: [1, 2]
-    - CAN_SPL_P4: [CAN_H, CAN_L]
+    - SPLIT_R_FUS: [SRV1_CANH, SRV1_CANL, SRV1_GND]
+    - W_ACT_30: [1, 2, 3]
+    - CAN_SPL_P4: [CAN_H, CAN_L, GND]
   -
-    - SPLIT_R_FUS: [SRV2_CANH, SRV2_CANL]
-    - W_ACT_31: [1, 2]
-    - CAN_SPL_P5: [CAN_H, CAN_L]
+    - SPLIT_R_FUS: [SRV2_CANH, SRV2_CANL, SRV2_GND]
+    - W_ACT_31: [1, 2, 3]
+    - CAN_SPL_P5: [CAN_H, CAN_L, GND]
+
+  # ==== ESC input capacitors (2 per ESC, from the ESC box) ==================================
+  # Both capacitors of an ESC sit on the same pad pair (in parallel). The capacitor legs are
+  # soldered directly to the ESC pads, see the W_ACT_32 to W_ACT_41 comment.
+  - - CAP_VTOL1_A: [CAP_POS, CAP_NEG]
+    - W_ACT_32: [1, 2]
+    - ESC_VTOL1_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL1_B: [CAP_POS, CAP_NEG]
+    - W_ACT_33: [1, 2]
+    - ESC_VTOL1_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL2_A: [CAP_POS, CAP_NEG]
+    - W_ACT_34: [1, 2]
+    - ESC_VTOL2_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL2_B: [CAP_POS, CAP_NEG]
+    - W_ACT_35: [1, 2]
+    - ESC_VTOL2_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL3_A: [CAP_POS, CAP_NEG]
+    - W_ACT_36: [1, 2]
+    - ESC_VTOL3_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL3_B: [CAP_POS, CAP_NEG]
+    - W_ACT_37: [1, 2]
+    - ESC_VTOL3_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL4_A: [CAP_POS, CAP_NEG]
+    - W_ACT_38: [1, 2]
+    - ESC_VTOL4_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_VTOL4_B: [CAP_POS, CAP_NEG]
+    - W_ACT_39: [1, 2]
+    - ESC_VTOL4_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_FWD_A: [CAP_POS, CAP_NEG]
+    - W_ACT_40: [1, 2]
+    - ESC_FWD_CAP: [CAP_POS, CAP_NEG]
+  - - CAP_FWD_B: [CAP_POS, CAP_NEG]
+    - W_ACT_41: [1, 2]
+    - ESC_FWD_CAP: [CAP_POS, CAP_NEG]

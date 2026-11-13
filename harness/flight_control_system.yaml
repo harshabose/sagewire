@@ -1,7 +1,8 @@
 # Flight control system harness (work in progress)
-# Scope so far: PDB -> Cube Orange+ power link, and two separate DroneCAN links:
-# Cube CAN1 -> Sierra PrecisionPoint-Pro GPS, and Cube CAN2 -> airspeed sensor.
-# The airspeed sensor has its own bus because it will sit far from the GPS (long cable).
+# Scope so far: PDB -> Cube Orange+ power link, and two DroneCAN links:
+# Cube CAN1 -> Sierra PrecisionPoint-Pro GPS (CAN1.1), with the airspeed sensor daisy-chained
+# behind it (GPS CAN1.2 -> airspeed sensor), and Cube CAN2 -> port 1 of the passive CAN splitter
+# (the servo branches, ports 2 to 5, are in actuators_system.yaml).
 # The LightWare GRF-500 LiDAR is wired to the Cube GPS2 port (UART8, SERIAL4 in ArduPilot).
 # ServoBoard and the other signals come later.
 #
@@ -9,7 +10,7 @@
 
 metadata:
   title: Flight control system
-  description: Flight controller power link, DroneCAN links (GPS on CAN1, airspeed on CAN2) and LiDAR on GPS2
+  description: Flight controller power link, DroneCAN links (GPS and daisy-chained airspeed sensor on CAN1, CAN splitter port 1 on CAN2) and LiDAR on GPS2
 
 connectors:
 
@@ -29,40 +30,68 @@ connectors:
     notes: "Cube Orange+ POWER1. CURRENT and VOLTAGE are analog, 3.3 V max."
     pinlabels: [VCC, VCC, CURRENT, VOLTAGE, GND, GND]
 
-  # ---- DroneCAN: Cube CAN1 -> GPS, and Cube CAN2 -> airspeed sensor (two separate buses) -----
+  # ---- DroneCAN: Cube CAN1 -> GPS -> airspeed sensor (daisy chain), Cube CAN2 -> CAN splitter ---
   # All CAN ports below use the Pixhawk standard 4-pin order: 1 VCC (5 V), 2 CAN_H, 3 CAN_L, 4 GND.
   # The Cube and the Sierra GPS document this order. For the airspeed sensor it is an ASSUMPTION,
   # because Sierra has no pinout document. TODO: get it from Sierra before the first power-up.
   # TODO: connector series is not stated for any of these ports. Pixhawk-standard CAN is usually
   # 4-pin JST-GH, but check the carrier, the GPS and the sensor before buying plugs.
 
-  # Cube Orange+ CAN1: GPS only. Each bus is point to point, so BOTH ends of each bus need
-  # 120 ohm termination. Cube end: check if the carrier has it built in (measure CAN_H to CAN_L
-  # with nothing plugged in and power off, about 120 ohm = terminated).
+  # Cube Orange+ CAN1: GPS, with the airspeed sensor daisy-chained behind it. The bus is point to
+  # point at the Cube end and the airspeed sensor is the far end, so both ends need 120 ohm
+  # termination. Cube end: each Cube CAN port is terminated with 120 ohm (docs/CAN Termination for
+  # Servos.md); confirm by measuring CAN_H to CAN_L with nothing plugged in and power off.
   FC_CAN1:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Cube Orange+ CAN1 (GPS). The Cube supplies the 5 V on pin 1. Cube-end termination: measure, see comment."
+    notes: "Cube Orange+ CAN1 (GPS, then airspeed sensor). The Cube supplies the 5 V on pin 1. Cube end is terminated (120 ohm)."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
-  # Cube Orange+ CAN2: airspeed sensor only.
+  # Cube Orange+ CAN2: passive CAN splitter port 1, which feeds the four servos (ports 2 to 5 are in
+  # actuators_system.yaml). Only CAN_H, CAN_L and GND are wired; the 5 V pin stays empty, because
+  # the splitter bus 5 V pin is not used by the servo branches.
   FC_CAN2:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Cube Orange+ CAN2 (airspeed sensor). The Cube supplies the 5 V on pin 1. Cube-end termination: measure, see comment."
+    notes: "Cube Orange+ CAN2 (CAN splitter port 1). Cube end is terminated (120 ohm). Pin 1 (5 V) not wired."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
+    hide_disconnected_pins: true
 
-  # Sierra PrecisionPoint-Pro, alone on CAN1, so it is the far end of that bus.
-  # Set CAN_TERM=1 (software termination) in its configuration. CAN1.2 is left unused.
+  # CAN splitter port 1 (SwiftWing 6-port passive splitter, JST-GH 4-pin ports, all ports bussed).
+  # The other ports are in actuators_system.yaml (CAN_SPL_P2 to P5). The splitter has no
+  # termination and no isolation. Same pin order on every port: 1 +5 V, 2 CAN_H, 3 CAN_L, 4 GND.
+  # TODO: GH housing part number and contact type (GHR-04V-S with SSHL-002T-P0.2 for 26 AWG), and
+  # confirm that the splitter ports are SM04B-GHS-TB headers.
+  CAN_SPL_P1:
+    type: JST GH 4-pin
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-04V-S
+    notes: "CAN splitter port 1 (passive, bussed): Cube CAN2. Pin 1 (5 V) not wired."
+    pinlabels: [VCC_5V, CAN_H, CAN_L, GND]
+    hide_disconnected_pins: true
+
+  # Sierra PrecisionPoint-Pro CAN1.1: first node on the CAN1 bus, with the airspeed sensor behind it
+  # on CAN1.2. It is NOT an end node any more, so its software termination must stay OFF (CAN_TERM=0).
+  # TODO: confirm in the Sierra manual that CAN1.1 and CAN1.2 are bussed inside the module (CAN
+  # lines and 5 V), and that 5 V 250 mA is the module's own draw (the sensor adds about 50 mA).
   GPS_CAN1_1:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Sierra PrecisionPoint-Pro CAN1.1. Max 5 V 250 mA for the module. End node: set CAN_TERM=1."
+    notes: "Sierra PrecisionPoint-Pro CAN1.1 (from the Cube). Max 5 V 250 mA for the module. Not the end node: CAN_TERM=0."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
-  # Sierra TrueSpeed V2 airspeed sensor, alone on CAN2. Pin order assumed (see above).
+  # Sierra PrecisionPoint-Pro CAN1.2: the daisy chain output towards the airspeed sensor. Pin order
+  # assumed the same as CAN1.1 (Pixhawk standard).
+  GPS_CAN1_2:
+    type: 4-pin CAN plug   # TODO: series
+    notes: "Sierra PrecisionPoint-Pro CAN1.2 (to the airspeed sensor). Pin order assumed same as CAN1.1."
+    pinlabels: [VCC, CAN_H, CAN_L, GND]
+
+  # Sierra TrueSpeed V2 airspeed sensor, last node on the CAN1 bus behind the GPS. Pin order
+  # assumed (see above).
   # TODO: ask Sierra if it has built-in termination and how it is enabled. If not, a 120 ohm
   # resistor across CAN_H and CAN_L at this end is needed, because it is the far end of the bus.
   ARSP_CAN:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Sierra TrueSpeed V2 CAN port, about 50 mA nominal. Pin order assumed Pixhawk standard."
+    notes: "Sierra TrueSpeed V2 CAN port, about 50 mA nominal. Pin order assumed Pixhawk standard. Far end of the CAN1 bus: needs termination."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
   # ---- LightWare GRF-500 LiDAR -> Cube GPS2 (UART, 3.3 V logic) ------------------------------
@@ -88,7 +117,7 @@ connectors:
     pinlabels: [VCC, TX, RX, SCL, SDA, GND]
     hide_disconnected_pins: true
 
-  # Not used: Sierra PrecisionPoint-Pro CAN1.2 port and its 7-pin Peripherals port (F9P UART2
+  # Not used: Sierra PrecisionPoint-Pro 7-pin Peripherals port (F9P UART2
   # TX/RX, MCU USART1 TX/RX, PPS, EXTINT, GND, all 3.3 V). Not needed for DroneCAN, left unwired.
 
 cables:
@@ -116,15 +145,15 @@ cables:
     length: 0   # TODO: real length after layout analysis
     notes: "Cube CAN1 to GPS. Twist CAN_H/CAN_L."
 
-  # Cube CAN2 -> airspeed sensor. Expected to be long (sensor position not fixed yet).
-  # Load is about 50 mA, so the 5 V drop on 26 AWG is small even for a few metres. For a long
+  # GPS CAN1.2 -> airspeed sensor (daisy chain). Expected to be long (sensor position not fixed
+  # yet). Load is about 50 mA, so the 5 V drop on 26 AWG is small even for a few metres. For a long
   # run keep CAN_H/CAN_L twisted and consider a shielded cable.
   W_FC_03:
     wirecount: 4
     gauge: 26 AWG
     colors: [RD, YE, GN, BK]
     length: 0   # TODO: real length after layout analysis, expected long
-    notes: "Cube CAN2 to airspeed sensor. Twist CAN_H/CAN_L; long run."
+    notes: "GPS CAN1.2 to airspeed sensor (daisy chain). Twist CAN_H/CAN_L; long run."
 
   # Cube GPS2 -> GRF-500. 4 wires: 5 V, sensor TXD to Cube RX, Cube TX to sensor RXD, GND.
   # Only GND pin 7 is used (pin 8 is also GND on the sensor). Load is 120 mA typical, 250 mA at
@@ -138,6 +167,15 @@ cables:
     length: 0   # TODO: real length after layout analysis
     notes: "Cube GPS2 to GRF-500 (serial). Wires: 1 5 V, 2 sensor TXD to Cube RX, 3 Cube TX to sensor RXD, 4 GND."
 
+  # Cube CAN2 -> CAN splitter port 1: CAN_H, CAN_L and GND (no 5 V). Keep CAN_H and CAN_L twisted.
+  # The splitter servo branches are far over the 0.3 m stub rule (see actuators_system.yaml).
+  W_FC_05:
+    wirecount: 3
+    gauge: 26 AWG
+    colors: [YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Cube CAN2 to CAN splitter port 1. Twist CAN_H/CAN_L."
+
 connections:
 
   # Labels repeat (5V, 5V, GND, GND), so pins are referenced by number.
@@ -150,9 +188,15 @@ connections:
     - W_FC_02: [1, 2, 3, 4]
     - GPS_CAN1_1: [VCC, CAN_H, CAN_L, GND]
 
-  - - FC_CAN2: [VCC, CAN_H, CAN_L, GND]
+  # Airspeed sensor daisy-chained behind the GPS.
+  - - GPS_CAN1_2: [VCC, CAN_H, CAN_L, GND]
     - W_FC_03: [1, 2, 3, 4]
     - ARSP_CAN: [VCC, CAN_H, CAN_L, GND]
+
+  # Cube CAN2 -> CAN splitter port 1 (CAN_H, CAN_L, GND; pin 1 5 V not wired).
+  - - FC_CAN2: [CAN_H, CAN_L, GND]
+    - W_FC_05: [1, 2, 3]
+    - CAN_SPL_P1: [CAN_H, CAN_L, GND]
 
   # LiDAR on GPS2, referenced by pin number (LRF_COMM has two GND pins).
   # Cube VCC(1) -> sensor VIN(6); Cube RX(3) <- sensor TXD(1); Cube TX(2) -> sensor RXD(2); GND(6) -> GND(7).
