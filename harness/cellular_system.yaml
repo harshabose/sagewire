@@ -5,13 +5,14 @@
 # left unconnected, because the BEC architecture is not decided).
 # Only the A8-MINI Ethernet and Power ports are used; the Gimbal Control (S.BUS) port is not wired.
 # Also: two Waveshare 5G dongles to the Jetson over USB 2.0 (D+, D-, GND; VBUS not wired yet).
-# Coming next: the UART link from the Cube telemetry port.
+# Also: the Cube TELEM2 UART link to the Jetson, through a TTL-to-USB converter that plugs into the
+# Jetson USB 2.0 jack.
 #
 # Cable lengths are 0 for now (placeholder). Real lengths come after the layout analysis.
 
 metadata:
   title: Cellular system
-  description: Jetson power input, SIYI camera Ethernet link and two Waveshare 5G dongles on USB 2.0; Cube UART link to be added
+  description: Jetson power input, SIYI camera Ethernet link and two Waveshare 5G dongles on USB 2.0, Cube TELEM2 UART link to the Jetson through a TTL-to-USB converter
 
 connectors:
 
@@ -157,6 +158,52 @@ connectors:
     notes: "Jetson base board USB-A jack for dongle 2. TODO: which jack (3 are USB 3.2, 1 is USB 2.0)."
     pinlabels: [VBUS, D-, D+, GND, SSRX-, SSRX+, GND_DRAIN, SSTX-, SSTX+]
 
+  # ---- Cube TELEM2 -> TTL-to-USB converter -> Jetson USB 2.0 jack (MAVLink telemetry link) ------
+  # The Cube telemetry port TELEM2 is wired to a TTL-to-USB converter board, which plugs straight
+  # into the Jetson's USB 2.0 jack (the one USB 2.0 Type-A jack on the base board; the other three
+  # are USB 3.2, and the two 5G dongles use those, see the TODOs on JET_USB1 and JET_USB2).
+  # The radio's own UART is on TELEM1 (rf_system.yaml).
+  # TODO: part numbers for everything in this link (Cube plug, converter, jack), not chosen yet.
+  #
+  # Cube Orange+ TELEM2, 6-pin: 1 VCC 5 V, 2 TX (out), 3 RX (in), 4 CTS, 5 RTS, 6 GND, all signals
+  # 3.3 V (same pin order as TELEM1, standard Cube pinout). Only TX, RX and GND are used. The 5 V
+  # pin stays empty (the converter is powered from the Jetson USB), and CTS and RTS stay empty
+  # (no flow control).
+  # TODO: plug series (the Cube end is a JST GH).
+  FC_TELEM2:
+    type: 6-pin TELEM plug   # TODO: series
+    notes: "Cube Orange+ TELEM2 port (UART). Cube TX (pin 2) goes to the converter RXD, Cube RX (pin 3) to the converter TXD. 3.3 V logic."
+    pinlabels: [VCC, TX, RX, CTS, RTS, GND]
+    hide_disconnected_pins: true
+
+  # TTL-to-USB converter, UART side. Pin names are from the converter's side: TXD is its output
+  # (to the Cube RX), RXD its input (from the Cube TX). Any VCC / 3V3 pin on the converter is not
+  # connected (the Cube 5 V pin is empty).
+  # TODO: converter part number, its UART connector (header or housing) and pin order, and its
+  # logic level: it must be 3.3 V (the Cube TELEM2 is 3.3 V; some converters are 5 V or have a
+  # jumper).
+  U2T_UART:
+    type: UART header (TTL side)   # TODO: series
+    notes: "TTL-to-USB converter, UART side. Converter TXD goes to the Cube RX, converter RXD to the Cube TX. Must be 3.3 V logic."
+    pinlabels: [TXD, RXD, GND]
+
+  # TTL-to-USB converter, USB side: assumed to have an onboard USB Type-A plug (like the dongles),
+  # so it plugs straight into the Jetson jack with no cable. USB 2.0 only (VBUS, D-, D+, GND),
+  # which is all the Jetson jack has. VBUS powers the converter.
+  # TODO: confirm the converter has an onboard Type-A plug (if it is micro-USB or USB-C, add a
+  # cable and the matching plug here).
+  U2T_USB:
+    type: USB 2.0 Type-A plug (on converter)   # TODO: part number
+    subtype: male
+    notes: "TTL-to-USB converter USB plug, goes straight into the Jetson USB 2.0 jack. VBUS powers the converter."
+    pinlabels: [VBUS, D-, D+, GND]
+
+  JET_USB3:
+    type: USB 2.0 Type-A jack (Jetson base board)
+    subtype: female
+    notes: "Jetson base board USB 2.0 jack, for the TTL-to-USB converter (Cube TELEM2 link). TODO: confirm which physical jack is the USB 2.0 one."
+    pinlabels: [VBUS, D-, D+, GND]
+
 cables:
 
   # Two twisted pairs, wire colours follow T568B so the pairs match the RJ45 pin pairs:
@@ -202,6 +249,19 @@ cables:
     colors: [WH, GN, BK]
     length: 0   # TODO: set after layout
     notes: "USB 2.0 data and ground for dongle 2. VBUS not wired yet."
+
+  # Cube TELEM2 -> TTL-to-USB converter UART. 3.3 V UART, so any thin wire does. 28 AWG sits inside
+  # the GH contact range (26 to 30 AWG) on the Cube end; the converter end is not chosen yet.
+  # Colours follow W_RF_01: yellow = Cube TX (to converter RXD), green = Cube RX (from converter
+  # TXD), black = ground.
+  # TODO: gauge once the converter connector is known, shielded or twisted pair if the run turns
+  # out long or noisy, the baud rate on the Cube side, and length after layout.
+  W_CEL_05:
+    wirecount: 3
+    gauge: 28 AWG
+    colors: [YE, GN, BK]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Cube TELEM2 to TTL-to-USB converter UART"
 
 connections:
 
@@ -264,3 +324,16 @@ connections:
     - WAV2_EXT_M: [1, 2, 3, 4]
     - -->
     - JET_USB2: [1, 2, 3, 4]
+
+  # Cube TELEM2 -> TTL-to-USB converter. Cube TX goes to the converter RXD and Cube RX to the
+  # converter TXD (crossover, as for any UART link).
+  -
+    - FC_TELEM2: [TX, RX, GND]
+    - W_CEL_05: [1, 2, 3]
+    - U2T_UART: [RXD, TXD, GND]
+
+  # The converter plugs straight into the Jetson USB 2.0 jack, pin for pin (no cable).
+  -
+    - U2T_USB: [1, 2, 3, 4]
+    - -->
+    - JET_USB3: [1, 2, 3, 4]

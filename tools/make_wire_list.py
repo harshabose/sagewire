@@ -29,7 +29,9 @@ c(["W_FC_05"], "CAN_H, CAN_L (twist) and GND to splitter port 1. 5 V pin not wir
 c(["W_CEL_01"], "Two twisted pairs (T568B colours), crossover: camera RX pair lands on RJ45 1/2, TX pair on 3/6. Gauge is a placeholder; shield undecided.")
 c(["W_CEL_02","W_CEL_03"], "USB 2.0 data pair (twist) plus GND. VBUS not wired (dongle needs about 2 A, source undecided). Gauge is a placeholder.")
 c(["W_CEL_04"], "Two wires per polarity: red pair to the two power pins, black pair to the two GND pins, joined at the XT30 pin. Power input is 3S-6S, needs a BEC (undecided). Gauge is a placeholder.")
-c(["W_RF_01"], "3.3 V UART. Yellow = Cube TX to radio RX, green = Cube RX from radio TX. Shield or twist if the run is long or noisy.")
+c(["W_CEL_05"], "3.3 V UART (MAVLink). Yellow = Cube TX to converter RXD, green = Cube RX from converter TXD. Converter and its UART connector not chosen; 28 AWG is a placeholder.")
+c(["W_RF_02"], "Two twisted pairs (T568B colours), crossover: radio RX pair lands on RJ45 1/2, TX pair on 3/6. Radio port is 100 Base-T, so RJ45 pins 4, 5, 7, 8 are empty. Gauge is a placeholder; shield undecided.")
+c(["W_RF_01"],"3.3 V UART. Yellow = Cube TX to radio RX, green = Cube RX from radio TX. Shield or twist if the run is long or noisy.")
 
 rows = []
 for f in sorted(glob.glob(os.path.join(root, "harness", "*.yaml"))):

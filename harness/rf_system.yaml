@@ -1,7 +1,8 @@
 # RF system harness (work in progress)
 # Scope: Doodle Labs Mesh Rider Mini (RM-1400-42M3, tag AIR): UART link from the Cube telemetry
-# port, the 5 V power port, the Ethernet port and the two antenna ports. Only the UART link is wired
-# for now. No video link yet. USB device, USB host and GPIO ports are not used.
+# port, the 5 V power port, the Ethernet port and the two antenna ports. The UART link and the
+# Ethernet link (RJ45 into the Jetson second Ethernet port) are wired; power and antennas are not.
+# USB device, USB host and GPIO ports are not used.
 #
 # Port layout (datasheet, Doodle Labs mini-OEM connector descriptions): ports 1, 2, 3, 5 and 6 are
 # JST SM4B-GHS-TB (4 pin), port 4 is JST SM6B-GHS-TB (6 pin), antennas ANT 0 / ANT 1 are Molex
@@ -59,15 +60,43 @@ connectors:
     pinlabels: [5V_1, 5V_2, 5V_3, GND_4, GND_5, GND_6]
 
   # Radio port 2, Ethernet (100 Base-T): pin 1 ETH1_RX_N, 2 ETH1_RX_P, 3 ETH1_TX_N, 4 ETH1_TX_P
-  # (directions are from the radio's side). Not wired for now (no video link yet).
+  # (directions are from the radio's side). Wired to an RJ45 plug (RF_RJ45 below), which plugs into
+  # the second Ethernet port of the Jetson (JET_ETH2).
   # The mating housing is a 4-pin GHR-04V-S.
   RF_P2:
     type: JST GH 4-pin plug housing
     subtype: female
     manufacturer: JST
     mpn: GHR-04V-S
-    notes: "Mesh Rider Mini port 2 (Ethernet), mates with SM4B-GHS-TB. Crimp contacts SSHL-002T-P0.2. Not used yet."
+    notes: "Mesh Rider Mini port 2 (Ethernet, 100 Base-T), mates with SM4B-GHS-TB. Crimp contacts SSHL-002T-P0.2. To the Jetson second Ethernet port via RJ45."
     pinlabels: [ETH_RX_N, ETH_RX_P, ETH_TX_N, ETH_TX_P]
+    hide_disconnected_pins: true
+
+  # ---- Radio Ethernet: RJ45 plug on our cable, and the Jetson second Ethernet port -----------
+  # The radio's GH Ethernet pins are converted to an RJ45 by our own cable (W_RF_02). That RJ45
+  # plug (RF_RJ45) plugs into the second Ethernet port on the Jetson board (JET_ETH2). The radio
+  # connects straight to the Jetson, no switch. Same convention as the A8-MINI link in
+  # cellular_system.yaml: the RJ45 pin numbers and names are the standard ones as seen by the Jetson
+  # (pins 1/2 = Jetson TX+/TX-, pins 3/6 = Jetson RX+/RX-), while the radio pin names are from the
+  # radio's side, so the pairs cross over: radio ETH_RX_P (pin 2) lands on RJ45 pin 1 (Jetson TX+),
+  # ETH_RX_N (pin 1) on pin 2, ETH_TX_P (pin 4) on pin 3 (Jetson RX+) and ETH_TX_N (pin 3) on pin 6.
+  # Pins 4, 5, 7, 8 are only used for gigabit; the radio port is 100 Base-T, so they stay empty.
+  # TODO: RJ45 plug part number (and shielded or not).
+  RF_RJ45:
+    type: RJ45 plug (8P8C)
+    subtype: male
+    notes: "Plug on the radio Ethernet cable, into the Jetson second Ethernet port. Pins 4, 5, 7, 8 unused (radio port is 100 Base-T)."
+    pinlabels: [TX+, TX-, RX+, NC, NC, RX-, NC, NC]
+    hide_disconnected_pins: true
+
+  # TODO: which Jetson module and carrier board, which physical port is the second Ethernet port,
+  # and how it is set up (static address on the radio subnet, no DHCP clash with the camera port).
+  JET_ETH2:
+    type: RJ45 jack (8P8C)
+    subtype: female
+    notes: "Jetson board second Ethernet port. Direct link to the Mesh Rider radio. Pins 4, 5, 7, 8 not used (radio port is 100 Base-T)."
+    pinlabels: [TX+, TX-, RX+, NC, NC, RX-, NC, NC]
+    hide_disconnected_pins: true
 
   # Antenna ports, MMCX female on the radio (Molex 73414-0100), so the antenna cable has an MMCX
   # male plug here. 2x2 MIMO, so both ports are expected to be used. Not wired for now.
@@ -99,6 +128,21 @@ cables:
     length: 0   # TODO: real length after layout analysis
     notes: "Cube TELEM1 to radio UART"
 
+  # Radio port 2 (Ethernet) -> RJ45 plug. Two twisted pairs, wire colours follow T568B so the pairs
+  # match the RJ45 pin pairs, same as W_CEL_01:
+  #   white-orange + orange = RJ45 pins 1, 2  (Jetson TX pair, goes to the radio RX pins)
+  #   white-green + green   = RJ45 pins 3, 6  (Jetson RX pair, comes from the radio TX pins)
+  # Wire order follows the radio pins 1 to 4 (RX_N, RX_P, TX_N, TX_P): orange, white-orange, green,
+  # white-green. 26 AWG is a placeholder (a GH contact takes 26 to 30 AWG). 100 Base-T over a short
+  # run needs no shield; revisit next to the 2.4 GHz transmitter.
+  # TODO: gauge, shielding and length after layout.
+  W_RF_02:
+    wirecount: 4
+    gauge: 26 AWG
+    colors: [OG, WHOG, GN, WHGN]
+    length: 0   # TODO: real length after layout analysis
+    notes: "Radio Ethernet port 2 to RJ45 plug. Two twisted pairs, crossover wiring (see comments)."
+
 connections:
 
   # Cube TELEM -> radio port 3 (UART). Cube TX goes to the radio RX and Cube RX to the radio TX.
@@ -106,4 +150,15 @@ connections:
     - W_RF_01: [1, 2, 3]
     - RF_P3: [UART_RX, UART_TX, GND]
 
-  # Not wired yet: RF_P4 (5 V, BEC not decided), RF_P2 (Ethernet) and RF_ANT0 / RF_ANT1.
+  # Step 1: radio Ethernet pins to the RJ45 plug, through our cable (crossover, see W_RF_02).
+  - - RF_P2: [ETH_RX_N, ETH_RX_P, ETH_TX_N, ETH_TX_P]
+    - W_RF_02: [1, 2, 3, 4]
+    - RF_RJ45: [2, 1, 6, 3]    # TX-, TX+, RX-, RX+ (Jetson side names)
+
+  # Step 2: the RJ45 plug mates with the Jetson second Ethernet port, pin for pin (straight through).
+  -
+    - RF_RJ45: [1, 2, 3, 6]
+    - -->
+    - JET_ETH2: [1, 2, 3, 6]
+
+  # Not wired yet: RF_P4 (5 V, BEC not decided) and RF_ANT0 / RF_ANT1.
