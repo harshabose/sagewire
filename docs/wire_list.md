@@ -93,4 +93,4 @@ Total: 60 cables.
 
 | ID | Gauge | Wires (colours) | From | To | What it connects | BOM | Comments |
 |---|---|---|---|---|---|---|---|
-| W_RF_01 | 28 AWG | 3 (YE, GN, BK) | FC_TELEM | RF_P3 | Cube TELEM to radio UART | yes | 3.3 V UART. Yellow = Cube TX to radio RX, green = Cube RX from radio TX. Shield or twist if the run is long or noisy. |
+| W_RF_01 | 28 AWG | 3 (YE, GN, BK) | FC_TELEM1 | RF_P3 | Cube TELEM1 to radio UART | yes | 3.3 V UART. Yellow = Cube TX to radio RX, green = Cube RX from radio TX. Shield or twist if the run is long or noisy. |

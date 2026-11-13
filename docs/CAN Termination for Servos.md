@@ -10,7 +10,7 @@ what is to be done:
 2. CAN terminator??
 3. 5G modem to antenna
 4. RF Antennas
-5. A2MINI power
+5. A8MINI power
 6. FC to Jetson telem
 7. ESC capacitors
 

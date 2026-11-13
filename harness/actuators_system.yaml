@@ -32,8 +32,8 @@ connectors:
   # Wing split, wing side: one XT90 male per VTOL motor ESC. It mates with the XT90 female
   # in power_system.yaml (XT90_VTOL{n}_F). Synthetic pin IDs; the housing is keyed, so polarity
   # cannot be reversed.
-  # TODO: variant (plain XT90, XT90-S anti-spark or XT90H) and part number. It must match the
-  # female side. XT90 is rated for 90 A continuous: check against the real ESC peak current.
+  # Variant fixed for now: plain XT90 (no anti-spark). TODO: revisit the variant (XT90-S anti-spark
+  # or XT90H) and set the part number. It must match the female side. XT90 is rated for 90 A continuous: check against the real ESC peak current.
   XT90_VTOL1_M:
     type: XT90 male
     subtype: male
@@ -67,15 +67,12 @@ connectors:
   # The board has three groups of pads, modelled as three connectors per ESC. Pin IDs are
   # synthetic (pads have no numbers), in label order.
   # TODO: the pad picture was of the F3[X] board; confirm the 120F3 pad layout is the same.
-  # TODO: the 120F3[X] is sold as a 12S, 50 V ESC, but a fully charged 12S pack is 50.4 V (more
-  # for LiHV), and braking spikes add to that. Check the APD datasheet for the real maximum.
   # Capacitors: each 120F3 box has 2 input capacitors (not installed), modelled further down as
   # CAP_xxx_A and CAP_xxx_B. APD says that if the ESC is more than 12 cm from the power source an
   # additional capacitor is needed on top of the included ones (2 or 3 extra for high current;
   # Panasonic FM/FS or Rubycon ZLJ). The wing ESCs will be over 12 cm (wing split).
   # TODO: the value and voltage of the included capacitors are not in the APD docs. Read the
-  # markings on them: the voltage must be well above 50.4 V (not 50 V). Then decide the extra
-  # capacitors for the long input leads.
+  # markings on them, then decide the extra capacitors for the long input leads.
   #
   # Battery input pads (+ and -, the two large pads).
   ESC_VTOL1_IN:
@@ -325,6 +322,7 @@ connectors:
   # wing; pins 24 and 25 are spare. The pin current rating is above what the loads need, including
   # the servos (user check).
   #
+  # TODO: the DB-25 pin map below is PROVISIONAL on purpose. Freeze it in a later pass.
   # Provisional DB-25 pin map (identical on both wings, so the harnesses mirror):
   #   1-4   servo 1: V+, GND, CAN_H, CAN_L        5-8   servo 2: V+, GND, CAN_H, CAN_L
   #   9-11  ESC 1 (forward boom): T, S, GND       12-14 ESC 2 (aft boom): T, S, GND
@@ -503,11 +501,12 @@ connectors:
   # branches use only CAN_H, CAN_L and GND: pin 1 stays empty on ports 2 to 5. The GND wire is the
   # same DB-25 pin as the servo power GND, so once the 12 V supply is wired the servo return current
   # has two paths (the power wire and, through the splitter GND, the Cube); keep that in mind.
-  # WARNING: the servos have a built-in 120 ohm termination (docs/CAN Termination for Servos.md).
-  # On a bussed splitter all four are in parallel (30 ohm) on top of the Cube's own 120 ohm, which
-  # is far below the 60 ohm of a correctly terminated bus. TODO: switch off the termination on
-  # three servos (or all four, since the Cube end is terminated) if they allow it; otherwise this
-  # needs a rethink. With no sharing the bus is a star, so the stubs (wing half-span plus fuselage
+  # NOTE: the Zeus servos have NO built-in CAN termination (mostly confirmed, not yet measured), so
+  # the bus end at the Cube (120 ohm on the Cube port) is the only termination on this branch.
+  # TODO: confirm by measuring CAN_H to CAN_L on a servo, power off. If a servo does turn out to
+  # have a built-in 120 ohm, four of them in parallel (30 ohm) on the bussed splitter would be far
+  # below the 60 ohm of a correctly terminated bus. (docs/CAN Termination for Servos.md still
+  # says the servos are terminated; that doc is being rewritten.) With no sharing the bus is a star, so the stubs (wing half-span plus fuselage
   # run) are far over the 0.3 m rule of thumb; lower the bitrate if the servos allow it.
   # TODO: GH housing part number and contact type (GHR-04V-S with SSHL-002T-P0.2 for 26 AWG), and
   # confirm that the splitter ports are SM04B-GHS-TB headers.

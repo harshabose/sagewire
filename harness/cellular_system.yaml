@@ -34,7 +34,10 @@ connectors:
   # (two twisted pairs, TX+/TX- and RX+/RX-); DP, DM (USB), GND, IO and NC stay empty.
   # The camera cable photo shows the wire order black, red, white, yellow on pins 3 to 6, which is
   # RX-, RX+, TX-, TX+ in the diagram order.
-  # TODO: housing series (the A2-MINI used a GH 1.25 mm, check the A8-MINI), plug or socket, part
+  # The A8-MINI user manual (v1.10) gives no connector series or part number in its text (the port
+  # diagram is a picture), and the housing photo shows two latching headers (9-pin and 4-pin) with
+  # no pin 1 marking and no readable part number.
+  # TODO: housing series (measure the pitch; the A2-MINI used a GH 1.25 mm), plug or socket, part
   # numbers, and which end is pin 1. The pin numbers below follow the diagram left to right.
   A8M_NET:
     type: 9-pin housing   # TODO: series
@@ -43,10 +46,11 @@ connectors:
     hide_disconnected_pins: true
 
   # Power port, pins in the order of the SIYI diagram: GND, GND, 3S-6S, 3S-6S. Both pins of each
-  # pair are wired. The input is a 3S to 6S battery range, NOT 5 V, and not the 12S pack either: it
-  # must come from a BEC (not decided yet, see the XT30 pair below).
-  # TODO: housing series and part number, which end is pin 1, and the exact voltage range and
-  # power draw from the SIYI A8-MINI datasheet.
+  # pair are wired. Manual spec (v1.10): working voltage 11 to 25.2 V (3S to 6S), average 5 W,
+  # peak 12 W. So it is NOT 5 V and not the 12S pack either: it must come from a BEC (not decided
+  # yet, see the XT30 pair below). The manual warns that lots before June 2023 may not accept 6S
+  # (25.2 V) and that the camera low-voltage warning is below 10 V.
+  # TODO: housing series and part number, and which end is pin 1.
   A8M_PWR:
     type: 4-pin housing   # TODO: series
     notes: "A8-MINI power port: 2 x power (3S-6S) and 2 x GND. All four pins wired."

@@ -34,15 +34,23 @@ connectors:
   # All CAN ports below use the Pixhawk standard 4-pin order: 1 VCC (5 V), 2 CAN_H, 3 CAN_L, 4 GND.
   # The Cube and the Sierra GPS document this order. For the airspeed sensor it is an ASSUMPTION,
   # because Sierra has no pinout document. TODO: get it from Sierra before the first power-up.
-  # TODO: connector series is not stated for any of these ports. Pixhawk-standard CAN is usually
-  # 4-pin JST-GH, but check the carrier, the GPS and the sensor before buying plugs.
+  # Cube ports: the CubePilot interface specification (docs.cubepilot.org, The Cube, interface
+  # specifications) says the high-density ports use JST-GH 1.25 mm cabling and gives the CAN ports
+  # 4 pins. It does not name a connector part per port, so JST GH 4-pin for CAN1/CAN2 is the
+  # standard, not a per-port statement. Pin 1 is VCC_5V (red) in the Cube pin tables; the page does
+  # not say which physical end of the header is pin 1.
+  # TODO: confirm the CAN1/CAN2 headers on the real carrier (SM04B-GHS-TB expected) and the series
+  # of the GPS and airspeed sensor ports before buying plugs.
 
   # Cube Orange+ CAN1: GPS, with the airspeed sensor daisy-chained behind it. The bus is point to
   # point at the Cube end and the airspeed sensor is the far end, so both ends need 120 ohm
   # termination. Cube end: each Cube CAN port is terminated with 120 ohm (docs/CAN Termination for
   # Servos.md); confirm by measuring CAN_H to CAN_L with nothing plugged in and power off.
   FC_CAN1:
-    type: 4-pin CAN plug   # TODO: series
+    type: JST GH 4-pin
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-04V-S   # TODO: confirm series on the carrier
     notes: "Cube Orange+ CAN1 (GPS, then airspeed sensor). The Cube supplies the 5 V on pin 1. Cube end is terminated (120 ohm)."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
@@ -50,7 +58,10 @@ connectors:
   # actuators_system.yaml). Only CAN_H, CAN_L and GND are wired; the 5 V pin stays empty, because
   # the splitter bus 5 V pin is not used by the servo branches.
   FC_CAN2:
-    type: 4-pin CAN plug   # TODO: series
+    type: JST GH 4-pin
+    subtype: female
+    manufacturer: JST
+    mpn: GHR-04V-S   # TODO: confirm series on the carrier
     notes: "Cube Orange+ CAN2 (CAN splitter port 1). Cube end is terminated (120 ohm). Pin 1 (5 V) not wired."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
     hide_disconnected_pins: true
@@ -70,12 +81,13 @@ connectors:
     hide_disconnected_pins: true
 
   # Sierra PrecisionPoint-Pro CAN1.1: first node on the CAN1 bus, with the airspeed sensor behind it
-  # on CAN1.2. It is NOT an end node any more, so its software termination must stay OFF (CAN_TERM=0).
+  # on CAN1.2. It is NOT an end node any more, so its termination must stay OFF (CAN_TERM=0, which
+  # is also the Sierra default).
   # TODO: confirm in the Sierra manual that CAN1.1 and CAN1.2 are bussed inside the module (CAN
   # lines and 5 V), and that 5 V 250 mA is the module's own draw (the sensor adds about 50 mA).
   GPS_CAN1_1:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Sierra PrecisionPoint-Pro CAN1.1 (from the Cube). Max 5 V 250 mA for the module. Not the end node: CAN_TERM=0."
+    notes: "Sierra PrecisionPoint-Pro CAN1.1 (from the Cube). Max 5 V 250 mA for the module. Not the end node: termination off (CAN_TERM=0, the Sierra default)."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
   # Sierra PrecisionPoint-Pro CAN1.2: the daisy chain output towards the airspeed sensor. Pin order
@@ -87,11 +99,12 @@ connectors:
 
   # Sierra TrueSpeed V2 airspeed sensor, last node on the CAN1 bus behind the GPS. Pin order
   # assumed (see above).
-  # TODO: ask Sierra if it has built-in termination and how it is enabled. If not, a 120 ohm
-  # resistor across CAN_H and CAN_L at this end is needed, because it is the far end of the bus.
+  # Termination: Sierra's default is OFF, and whether to terminate this far end is UNSETTLED.
+  # TODO: decide (enable the sensor termination if it has one, or a 120 ohm resistor across CAN_H
+  # and CAN_L at this end, or none), since it is the far end of the bus.
   ARSP_CAN:
     type: 4-pin CAN plug   # TODO: series
-    notes: "Sierra TrueSpeed V2 CAN port, about 50 mA nominal. Pin order assumed Pixhawk standard. Far end of the CAN1 bus: needs termination."
+    notes: "Sierra TrueSpeed V2 CAN port, about 50 mA nominal. Pin order assumed Pixhawk standard. Far end of the CAN1 bus: termination off by default, decision open."
     pinlabels: [VCC, CAN_H, CAN_L, GND]
 
   # ---- LightWare GRF-500 LiDAR -> Cube GPS2 (UART, 3.3 V logic) ------------------------------

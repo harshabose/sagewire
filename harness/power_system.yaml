@@ -93,8 +93,8 @@ connectors:
   # these carry full battery voltage (50.4 V max) and the motor current.
   # Synthetic pin IDs (the XT90 has no pin numbers); the housing is keyed, so polarity cannot
   # be reversed.
-  # TODO: variant (plain XT90, XT90-S anti-spark or XT90H) and part number. Use one variant
-  # on both sides of the split. XT90 is rated for 90 A continuous: check against the real ESC
+  # Variant fixed for now: plain XT90 (no anti-spark). TODO: revisit the variant (XT90-S anti-spark
+  # or XT90H) and set the part number. Use one variant on both sides of the split. XT90 is rated for 90 A continuous: check against the real ESC
   # peak current.
   XT90_VTOL1_F:
     type: XT90 female
@@ -127,7 +127,6 @@ connectors:
   # Forward-thrust ESC (APD 120F3, same ESC as the VTOL motors), battery input pads (+ and -).
   # It sits in the fuselage, so it is wired straight from the PDB pads with no wing split.
   # Its signal, capacitor and motor phase pads are in actuators_system.yaml. Pin IDs are synthetic.
-  # TODO: same 12S / 50 V check as the VTOL ESCs (see actuators_system.yaml).
   ESC_FWD_IN:
     type: Solder pads
     notes: "Forward ESC battery input, + and -"

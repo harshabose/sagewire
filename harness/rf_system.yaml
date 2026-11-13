@@ -25,11 +25,10 @@ connectors:
   # signals 3.3 V (same pin order as the GPS2 port in flight_control_system.yaml, standard Cube
   # pinout). Only TX, RX and GND are used; the 5 V pin stays empty (the radio has its own supply)
   # and the radio has no flow-control pins, so CTS and RTS stay empty too.
-  # TODO: choose TELEM1 or TELEM2 and move this connector to flight_control_system.yaml when that
-  # file gets its telemetry port. Plug series (the Cube end is a JST GH).
-  FC_TELEM:
+  # TODO: plug series (the Cube end is a JST GH).
+  FC_TELEM1:
     type: 6-pin TELEM plug   # TODO: series
-    notes: "Cube Orange+ TELEM port (UART). Cube TX (pin 2) goes to the radio UART_RX, Cube RX (pin 3) to the radio UART_TX. 3.3 V logic."
+    notes: "Cube Orange+ TELEM1 port (UART). Cube TX (pin 2) goes to the radio UART_RX, Cube RX (pin 3) to the radio UART_TX. 3.3 V logic."
     pinlabels: [VCC, TX, RX, CTS, RTS, GND]
     hide_disconnected_pins: true
 
@@ -98,12 +97,12 @@ cables:
     gauge: 28 AWG
     colors: [YE, GN, BK]
     length: 0   # TODO: real length after layout analysis
-    notes: "Cube TELEM to radio UART"
+    notes: "Cube TELEM1 to radio UART"
 
 connections:
 
   # Cube TELEM -> radio port 3 (UART). Cube TX goes to the radio RX and Cube RX to the radio TX.
-  - - FC_TELEM: [TX, RX, GND]
+  - - FC_TELEM1: [TX, RX, GND]
     - W_RF_01: [1, 2, 3]
     - RF_P3: [UART_RX, UART_TX, GND]
 
