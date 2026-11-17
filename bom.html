@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Sage consolidated BOM</title>
+<style>
+:root{color-scheme:light dark;--fg:#1a1a1a;--bg:#fff;--muted:#666;--line:#d0d0d0;--head:#f0f0f0;--warn:#a15c00}
+@media (prefers-color-scheme:dark){:root{--fg:#e8e8e8;--bg:#161616;--muted:#a0a0a0;--line:#3a3a3a;--head:#242424;--warn:#e0a040}}
+body{font:15px/1.45 system-ui,sans-serif;margin:1.5rem auto;padding:0 1rem;max-width:96rem;color:var(--fg);background:var(--bg)}
+h1{font-size:1.5rem;margin:.2rem 0 .6rem}h2{font-size:1.15rem;margin:1.6rem 0 .5rem}
+a{color:inherit}nav{margin-bottom:.8rem;font-size:.9rem}small,.muted{color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border:1px solid var(--line);padding:.3rem .5rem;text-align:left;vertical-align:top}
+th{background:var(--head);position:sticky;top:0}
+td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
+.warn{color:var(--warn)}ul.toc{columns:2;padding-left:1.2rem}
+</style>
+</head>
+<body>
+<nav><a href="index.html">&larr; Sage wiring</a></nav>
+<h1>Consolidated BOM</h1>
+<p>Every harness BOM merged: lines with the same description, manufacturer and MPN are added together. The per-harness lists are the BOM tables on each harness page. <a href="bom.csv">Download as CSV</a>.</p>
+<p class="muted">23 part lines, 16 connector lines, 11 wire lines. <span class="warn">17 part and connector lines have no MPN yet</span> (series-only or not chosen); wire lengths are all placeholders (0 m).</p>
+<h2>Parts and modules</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Id</th><th>Description</th><th>Qty</th><th>Manufacturer</th><th>MPN</th><th>Designators</th><th>Harnesses</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>5G dongle board, USB to M.2 Key B (modem not included)</td><td class="num">2</td><td>Waveshare</td><td>USB TO M.2 B KEY</td><td>WAV1, WAV2</td><td>cellular</td></tr>
+<tr><td class="num">2</td><td>5G modem, M.2 Key B (30 x 52 mm)</td><td class="num">2</td><td>Telit Cinterion</td><td>FN990A28-HP</td><td>WAV1_MOD, WAV2_MOD</td><td>cellular</td></tr>
+<tr><td class="num">3</td><td>Airspeed sensor, TrueSpeed V2 (DroneCAN)</td><td class="num">1</td><td>Sierra</td><td>SA-TSPD 0019</td><td>SPD</td><td>flight_control</td></tr>
+<tr><td class="num">4</td><td>Base board, Jetson Orin Nano/NX, dual Ethernet</td><td class="num">1</td><td>Waveshare</td><td>JETSON-ORIN-IO-BASE-B</td><td>JET_BASE</td><td>cellular</td></tr>
+<tr><td class="num">5</td><td>CAN splitter, 6-port passive, DroneCAN</td><td class="num">1</td><td>SwiftWing</td><td><span class="warn">&mdash;</span></td><td>CAN_SPL</td><td>flight_control</td></tr>
+<tr><td class="num">6</td><td>Capacitor, electrolytic 220 uF 100 V, low-ESR</td><td class="num">1</td><td></td><td><span class="warn">&mdash;</span></td><td>CAP_BAT</td><td>power</td></tr>
+<tr><td class="num">7</td><td>Capacitor, electrolytic 330 uF 50 V (supplied with the ESC)</td><td class="num">10</td><td></td><td><span class="warn">&mdash;</span></td><td>CAP_FWD_A, CAP_FWD_B, CAP_VTOL1_A, CAP_VTOL1_B, CAP_VTOL2_A, CAP_VTOL2_B, CAP_VTOL3_A, CAP_VTOL3_B, CAP_VTOL4_A, CAP_VTOL4_B</td><td>actuators_frw, actuators_left_motors, actuators_right_motors</td></tr>
+<tr><td class="num">8</td><td>Compute module, Jetson Orin NX 16GB</td><td class="num">1</td><td>NVIDIA</td><td><span class="warn">&mdash;</span></td><td>JET_MOD</td><td>cellular</td></tr>
+<tr><td class="num">9</td><td>Converter, USB to TTL UART (3.3 V logic)</td><td class="num">1</td><td></td><td><span class="warn">&mdash;</span></td><td>U2T</td><td>cellular</td></tr>
+<tr><td class="num">10</td><td>ESC, 120F3[X]v2</td><td class="num">5</td><td>APD</td><td>100785</td><td>ESC_FWD, ESC_VTOL1, ESC_VTOL2, ESC_VTOL3, ESC_VTOL4</td><td>actuators_frw, actuators_left_motors, actuators_right_motors</td></tr>
+<tr><td class="num">11</td><td>Flight controller, Cube Orange+ Standard Set with ADS-B carrier board</td><td class="num">1</td><td>CubePilot</td><td>HX4-06222</td><td>FCT</td><td>flight_control</td></tr>
+<tr><td class="num">12</td><td>Gimbal camera, A8 mini</td><td class="num">1</td><td>SIYI</td><td>A8 mini</td><td>A8M</td><td>cellular</td></tr>
+<tr><td class="num">13</td><td>GNSS receiver, PrecisionPoint-Pro (DroneCAN)</td><td class="num">1</td><td>Sierra</td><td><span class="warn">&mdash;</span></td><td>GPS</td><td>flight_control</td></tr>
+<tr><td class="num">14</td><td>Laser rangefinder, GRF-500</td><td class="num">1</td><td>LightWare</td><td>GRF-500</td><td>LDR</td><td>flight_control</td></tr>
+<tr><td class="num">15</td><td>Motor, 8020 PRO 120KV (VTOL)</td><td class="num">4</td><td>Vector Technics</td><td><span class="warn">&mdash;</span></td><td>MOT_VTOL1, MOT_VTOL2, MOT_VTOL3, MOT_VTOL4</td><td>actuators_left_motors, actuators_right_motors</td></tr>
+<tr><td class="num">16</td><td>Motor, VT4130 FW (forward thrust)</td><td class="num">1</td><td>Vector Technics</td><td><span class="warn">&mdash;</span></td><td>MOT_FWD</td><td>actuators_frw</td></tr>
+<tr><td class="num">17</td><td>Power distribution board, 400 A</td><td class="num">1</td><td>axldrone</td><td>PDB 400A</td><td>PDB</td><td>power</td></tr>
+<tr><td class="num">18</td><td>Pushbutton switch, 16 mm latching, metal, LED ring</td><td class="num">1</td><td>ProMax</td><td>PPS16006RL-11F</td><td>SW_BTN</td><td>power</td></tr>
+<tr><td class="num">19</td><td>Radio, Mesh Rider Mini</td><td class="num">1</td><td>Doodle Labs</td><td>RM-1400-42M3</td><td>AIR</td><td>rf</td></tr>
+<tr><td class="num">20</td><td>Servo, Z1500-12V (DroneCAN)</td><td class="num">4</td><td>Zeus</td><td>Z1500-12V</td><td>SRV_L1, SRV_L2, SRV_R1, SRV_R2</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">21</td><td>Strobe light, StrobeIT (RGB LED, 5 V)</td><td class="num">4</td><td>Teravolt</td><td>StrobeIT</td><td>LED_L1, LED_L2, LED_R1, LED_R2</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">22</td><td>Strobe light, StrobeIT-Pro (R/G-W LED, 5 V)</td><td class="num">2</td><td>Teravolt</td><td>StrobeIT-Pro</td><td>LED_LT, LED_RT</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">23</td><td>UBEC, KDE UBECUVC (selectable 5, 6, 8, 12 V output)</td><td class="num">2</td><td>KDE Direct</td><td>KDE-UBECUVC</td><td>UBEC12, UBEC5</td><td>power</td></tr>
+</tbody>
+</table></div>
+<h2>Connectors</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Id</th><th>Description</th><th>Qty</th><th>Manufacturer</th><th>MPN</th><th>Designators</th><th>Harnesses</th></tr></thead>
+<tbody>
+<tr><td class="num">24</td><td>Connector, D-sub DB-25 plug, male, 25 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>SPLIT_L_WING, SPLIT_R_WING</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">25</td><td>Connector, D-sub DB-25 socket, female, 25 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>SPLIT_L_FUS, SPLIT_R_FUS</td><td>actuators_left_fuselage, actuators_right_fuselage</td></tr>
+<tr><td class="num">26</td><td>Connector, JST GH 4-pin plug housing, female, 4 pins</td><td class="num">12</td><td>JST</td><td>GHR-04V-S</td><td>ARSP_CAN, CAN_SPL_P1, CAN_SPL_P2, CAN_SPL_P3, CAN_SPL_P4, CAN_SPL_P5, FC_CAN1, FC_CAN2, GPS_CAN1_1, GPS_CAN1_2, RF_P2, RF_P3</td><td>actuators_left_fuselage, actuators_right_fuselage, flight_control, rf</td></tr>
+<tr><td class="num">27</td><td>Connector, JST GH 6-pin plug housing, female, 6 pins</td><td class="num">5</td><td>JST</td><td>GHR-06V-S</td><td>FC_GPS2, FC_TELEM1, FC_TELEM2, PDB_FC_PWR, RF_P4</td><td>cellular, flight_control, rf</td></tr>
+<tr><td class="num">28</td><td>Connector, JST XH 2-pin plug housing, female, 2 pins</td><td class="num">1</td><td>JST</td><td>XHP-2</td><td>PDB_SW</td><td>power</td></tr>
+<tr><td class="num">29</td><td>Connector, LightWare Pixhawk adapter for GRF series, 8 pins</td><td class="num">1</td><td>LightWare</td><td>ACC_PX_08SUR-32S</td><td>LRF_COMM</td><td>flight_control</td></tr>
+<tr><td class="num">30</td><td>Connector, M5 waterproof 4-pin male plug (cable end), male, 4 pins</td><td class="num">4</td><td></td><td><span class="warn">&mdash;</span></td><td>SRV_L1_M, SRV_L2_M, SRV_R1_M, SRV_R2_M</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">31</td><td>Connector, Molex CLIK-Mate 2.00 mm 6-pin housing, 6 pins</td><td class="num">1</td><td>Molex</td><td>502439-0600</td><td>FC_POWER1</td><td>flight_control</td></tr>
+<tr><td class="num">32</td><td>Connector, Molex KK 254 3-pin housing (DuPont), female, 3 pins</td><td class="num">22</td><td>Molex</td><td><span class="warn">&mdash;</span></td><td>FC_AUX1, FC_AUX2, FC_AUX3, FC_AUX4, FC_AUX5, FC_MAIN1, FC_MAIN2, FC_MAIN3, FC_MAIN4, FC_MAIN5, FC_MAIN6, UBEC12_CAM, UBEC12_SRV1, UBEC12_SRV2, UBEC12_SRV3, UBEC12_SRV4, UBEC5_LED1, UBEC5_LED2, UBEC5_LED3, UBEC5_LED4, UBEC5_LED5, UBEC5_LED6</td><td>actuators_frw, actuators_left_fuselage, actuators_right_fuselage, cellular</td></tr>
+<tr><td class="num">33</td><td>Connector, RJ45 plug (8P8C), male, 8 pins</td><td class="num">1</td><td></td><td><span class="warn">&mdash;</span></td><td>RF_RJ45</td><td>rf</td></tr>
+<tr><td class="num">34</td><td>Connector, USB Type-A female breakout board, female, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_F, WAV2_EXT_F</td><td>cellular</td></tr>
+<tr><td class="num">35</td><td>Connector, USB Type-A male breakout board, male, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_M, WAV2_EXT_M</td><td>cellular</td></tr>
+<tr><td class="num">36</td><td>Connector, XT30U female, female, 2 pins</td><td class="num">2</td><td>Amass</td><td>XT30U-F</td><td>A8M_XT30_F, JET_XT30_F</td><td>cellular</td></tr>
+<tr><td class="num">37</td><td>Connector, XT30U male, male, 2 pins</td><td class="num">1</td><td>Amass</td><td>XT30U-M</td><td>JET_XT30_M</td><td>cellular</td></tr>
+<tr><td class="num">38</td><td>Connector, XT90 female (plain), female, 2 pins</td><td class="num">4</td><td>Amass</td><td><span class="warn">&mdash;</span></td><td>XT90_VTOL1_F, XT90_VTOL2_F, XT90_VTOL3_F, XT90_VTOL4_F</td><td>power</td></tr>
+<tr><td class="num">39</td><td>Connector, XT90 male (plain), male, 2 pins</td><td class="num">4</td><td>Amass</td><td><span class="warn">&mdash;</span></td><td>XT90_VTOL1_M, XT90_VTOL2_M, XT90_VTOL3_M, XT90_VTOL4_M</td><td>actuators_left_motors, actuators_right_motors</td></tr>
+</tbody>
+</table></div>
+<h2>Wire (length in metres, placeholders until the layout analysis)</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Id</th><th>Description</th><th>Qty</th><th>Manufacturer</th><th>MPN</th><th>Designators</th><th>Harnesses</th></tr></thead>
+<tbody>
+<tr><td class="num">40</td><td>Cable, 2 x 10 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_01, W_ACT_02, W_ACT_03, W_ACT_04, W_PWR_05, W_PWR_06, W_PWR_07, W_PWR_08, W_PWR_09</td><td>actuators_left_motors, actuators_right_motors, power</td></tr>
+<tr><td class="num">41</td><td>Cable, 2 x 18 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_08</td><td>cellular</td></tr>
+<tr><td class="num">42</td><td>Cable, 2 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_42, W_ACT_43, W_ACT_44, W_ACT_45, W_ACT_46, W_ACT_47, W_ACT_48, W_ACT_49, W_ACT_50, W_ACT_51, W_CEL_07</td><td>actuators_left_fuselage, actuators_right_fuselage, cellular</td></tr>
+<tr><td class="num">43</td><td>Cable, 2 x 24 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_PWR_03</td><td>power</td></tr>
+<tr><td class="num">44</td><td>Cable, 2 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_10, W_ACT_11, W_ACT_12, W_ACT_13, W_ACT_19, W_ACT_20, W_ACT_21, W_ACT_22, W_ACT_52, W_ACT_53, W_ACT_54, W_ACT_55, W_ACT_56, W_ACT_57, W_ACT_58, W_ACT_59, W_ACT_60, W_ACT_61, W_ACT_62</td><td>actuators_frw, actuators_left_fuselage, actuators_left_wing, actuators_right_fuselage, actuators_right_wing</td></tr>
+<tr><td class="num">45</td><td>Cable, 3 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_14, W_ACT_15, W_ACT_16, W_ACT_23, W_ACT_24, W_ACT_25</td><td>actuators_left_wing, actuators_right_wing</td></tr>
+<tr><td class="num">46</td><td>Cable, 3 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_17, W_ACT_18, W_ACT_26, W_ACT_27, W_ACT_28, W_ACT_29, W_ACT_30, W_ACT_31, W_FC_05, W_RF_01</td><td>actuators_left_fuselage, actuators_left_wing, actuators_right_fuselage, actuators_right_wing, flight_control, rf</td></tr>
+<tr><td class="num">47</td><td>Cable, 3 x 28 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_05</td><td>cellular</td></tr>
+<tr><td class="num">48</td><td>Cable, 4 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_02, W_CEL_03</td><td>cellular</td></tr>
+<tr><td class="num">49</td><td>Cable, 4 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_FC_02, W_FC_03, W_FC_04, W_RF_02</td><td>flight_control, rf</td></tr>
+<tr><td class="num">50</td><td>Cable, 6 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_FC_01, W_RF_03</td><td>flight_control, rf</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

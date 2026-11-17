@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Sage wire list</title>
+<style>
+:root{color-scheme:light dark;--fg:#1a1a1a;--bg:#fff;--muted:#666;--line:#d0d0d0;--head:#f0f0f0;--warn:#a15c00}
+@media (prefers-color-scheme:dark){:root{--fg:#e8e8e8;--bg:#161616;--muted:#a0a0a0;--line:#3a3a3a;--head:#242424;--warn:#e0a040}}
+body{font:15px/1.45 system-ui,sans-serif;margin:1.5rem auto;padding:0 1rem;max-width:96rem;color:var(--fg);background:var(--bg)}
+h1{font-size:1.5rem;margin:.2rem 0 .6rem}h2{font-size:1.15rem;margin:1.6rem 0 .5rem}
+a{color:inherit}nav{margin-bottom:.8rem;font-size:.9rem}small,.muted{color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border:1px solid var(--line);padding:.3rem .5rem;text-align:left;vertical-align:top}
+th{background:var(--head);position:sticky;top:0}
+td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
+.warn{color:var(--warn)}ul.toc{columns:2;padding-left:1.2rem}
+</style>
+</head>
+<body>
+<nav><a href="index.html">&larr; Sage wiring</a></nav>
+<h1>Wire list</h1>
+<p>All 87 cables in <code>harness/*.yaml</code>, with gauge, what they connect and comments. Generated from the YAML files.</p>
+<ul>
+<li><b>From / To</b> are connector IDs as drawn in each harness; the pins used are in the YAML.</li>
+<li><b>BOM</b>: <code>no</code> means the wire belongs to a component (motor leads, capacitor legs, UBEC leads), so it is not bought.</li>
+<li><b>Length</b>: every length is still a placeholder (0 m) until the layout analysis is done.</li>
+<li>Gauges marked as placeholder are not decided yet; the others are recommendations written into the YAML comments.</li>
+</ul>
+<ul class="toc">
+<li><a href="#actuators_frw_system">actuators_frw_system.yaml</a> (<a href="actuators_frw_system.html">diagram</a>)</li>
+<li><a href="#actuators_left_fuselage_system">actuators_left_fuselage_system.yaml</a> (<a href="actuators_left_fuselage_system.html">diagram</a>)</li>
+<li><a href="#actuators_left_motors_system">actuators_left_motors_system.yaml</a> (<a href="actuators_left_motors_system.html">diagram</a>)</li>
+<li><a href="#actuators_left_wing_system">actuators_left_wing_system.yaml</a> (<a href="actuators_left_wing_system.html">diagram</a>)</li>
+<li><a href="#actuators_right_fuselage_system">actuators_right_fuselage_system.yaml</a> (<a href="actuators_right_fuselage_system.html">diagram</a>)</li>
+<li><a href="#actuators_right_motors_system">actuators_right_motors_system.yaml</a> (<a href="actuators_right_motors_system.html">diagram</a>)</li>
+<li><a href="#actuators_right_wing_system">actuators_right_wing_system.yaml</a> (<a href="actuators_right_wing_system.html">diagram</a>)</li>
+<li><a href="#cellular_system">cellular_system.yaml</a> (<a href="cellular_system.html">diagram</a>)</li>
+<li><a href="#flight_control_system">flight_control_system.yaml</a> (<a href="flight_control_system.html">diagram</a>)</li>
+<li><a href="#power_system">power_system.yaml</a> (<a href="power_system.html">diagram</a>)</li>
+<li><a href="#rf_system">rf_system.yaml</a> (<a href="rf_system.html">diagram</a>)</li>
+</ul>
+<h2 id="actuators_frw_system">actuators_frw_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_09</td><td>none (component&#x27;s own leads)</td><td>3 (YE, GN, BU)</td><td>ESC_FWD_PH</td><td>MOT_FWD</td><td>Forward motor phase leads</td><td>no</td><td>Motor&#x27;s own leads, gauge unknown (not in the listing); use 10 AWG if ever extended. Phase order only sets spin direction.</td></tr>
+<tr><td class="nowrap">W_ACT_56</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_AUX5</td><td>ESC_FWD_SIG</td><td>Cube AUX 5 to forward ESC signal and ground (twisted pair)</td><td>yes</td><td>Cube AUX 5 signal and ground straight to the forward ESC. Twist the pair. Telemetry T not wired.</td></tr>
+<tr><td class="nowrap">W_ACT_40</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_FWD_A</td><td>ESC_FWD_CAP</td><td>Direct capacitor legs soldered: forward ESC, capacitor 1 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_41</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_FWD_B</td><td>ESC_FWD_CAP</td><td>Direct capacitor legs soldered: forward ESC, capacitor 2 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_left_fuselage_system">actuators_left_fuselage_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_28</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>SPLIT_L_FUS</td><td>CAN_SPL_P2</td><td>Left wing servo 1 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)</td><td>yes</td><td>CAN_H, CAN_L (twist) and GND to splitter pins 2, 3, 4. Pin 1 (5 V) empty. GND is the same DB-25 pin as the servo power return.</td></tr>
+<tr><td class="nowrap">W_ACT_29</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>SPLIT_L_FUS</td><td>CAN_SPL_P3</td><td>Left wing servo 2 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)</td><td>yes</td><td>CAN_H, CAN_L (twist) and GND to splitter pins 2, 3, 4. Pin 1 (5 V) empty. GND is the same DB-25 pin as the servo power return.</td></tr>
+<tr><td class="nowrap">W_ACT_42</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_SRV1</td><td>SPLIT_L_FUS</td><td>12 V UBEC servo port 1 to left wing servo 1 power (12 V and GND), fuselage DB-25</td><td>yes</td><td>12 V UBEC servo port to the fuselage DB-25 servo power pins. 22 AWG, short. Each servo has its own port (3.3 A max, servo burst 2.2 A).</td></tr>
+<tr><td class="nowrap">W_ACT_43</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_SRV2</td><td>SPLIT_L_FUS</td><td>12 V UBEC servo port 2 to left wing servo 2 power (12 V and GND), fuselage DB-25</td><td>yes</td><td>12 V UBEC servo port to the fuselage DB-25 servo power pins. 22 AWG, short. Each servo has its own port (3.3 A max, servo burst 2.2 A).</td></tr>
+<tr><td class="nowrap">W_ACT_46</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED1</td><td>SPLIT_L_FUS</td><td>5 V UBEC servo port 1 to left wing LED 1 power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_47</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED2</td><td>SPLIT_L_FUS</td><td>5 V UBEC servo port 2 to left wing LED 2 power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_48</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED3</td><td>SPLIT_L_FUS</td><td>5 V UBEC servo port 3 to left wingtip LED power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_53</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_AUX2</td><td>SPLIT_L_FUS</td><td>Cube AUX 2 to VTOL motor 2 (rear left) ESC signal and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube AUX OUT (DShot-capable) signal and ground to the fuselage DB-25 ESC pins, then on through the wing cable. Twist the pair. Long run: DShot margin to check. Telemetry T not wired.</td></tr>
+<tr><td class="nowrap">W_ACT_54</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_AUX3</td><td>SPLIT_L_FUS</td><td>Cube AUX 3 to VTOL motor 3 (front left) ESC signal and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube AUX OUT (DShot-capable) signal and ground to the fuselage DB-25 ESC pins, then on through the wing cable. Twist the pair. Long run: DShot margin to check. Telemetry T not wired.</td></tr>
+<tr><td class="nowrap">W_ACT_57</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN1</td><td>SPLIT_L_FUS</td><td>Cube MAIN 1 to left wing LED 1 PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+<tr><td class="nowrap">W_ACT_58</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN2</td><td>SPLIT_L_FUS</td><td>Cube MAIN 2 to left wing LED 2 PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+<tr><td class="nowrap">W_ACT_59</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN3</td><td>SPLIT_L_FUS</td><td>Cube MAIN 3 to left wingtip LED PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_left_motors_system">actuators_left_motors_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_02</td><td>10 AWG</td><td>2 (RD, BK)</td><td>XT90_VTOL2_M</td><td>ESC_VTOL2_IN</td><td>VTOL motor 2 (rear left) power, wing split to ESC</td><td>yes</td><td>Same 10 AWG as the fuselage side. Keep short (APD: more capacitance beyond 12 cm). 8 AWG if long or hot.</td></tr>
+<tr><td class="nowrap">W_ACT_03</td><td>10 AWG</td><td>2 (RD, BK)</td><td>XT90_VTOL3_M</td><td>ESC_VTOL3_IN</td><td>VTOL motor 3 (front left) power, wing split to ESC</td><td>yes</td><td>Same 10 AWG as the fuselage side. Keep short (APD: more capacitance beyond 12 cm). 8 AWG if long or hot.</td></tr>
+<tr><td class="nowrap">W_ACT_06</td><td>none (component&#x27;s own leads)</td><td>3 (YE, GN, BU)</td><td>ESC_VTOL2_PH</td><td>MOT_VTOL2</td><td>VTOL motor 2 (rear left) phase leads</td><td>no</td><td>Motor&#x27;s own leads, gauge unknown (not in the listing); use 10 AWG if ever extended. Phase order only sets spin direction.</td></tr>
+<tr><td class="nowrap">W_ACT_07</td><td>none (component&#x27;s own leads)</td><td>3 (YE, GN, BU)</td><td>ESC_VTOL3_PH</td><td>MOT_VTOL3</td><td>VTOL motor 3 (front left) phase leads</td><td>no</td><td>Motor&#x27;s own leads, gauge unknown (not in the listing); use 10 AWG if ever extended. Phase order only sets spin direction.</td></tr>
+<tr><td class="nowrap">W_ACT_34</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL2_A</td><td>ESC_VTOL2_CAP</td><td>Direct capacitor legs soldered: VTOL motor 2 (rear left) ESC, capacitor 1 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_35</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL2_B</td><td>ESC_VTOL2_CAP</td><td>Direct capacitor legs soldered: VTOL motor 2 (rear left) ESC, capacitor 2 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_36</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL3_A</td><td>ESC_VTOL3_CAP</td><td>Direct capacitor legs soldered: VTOL motor 3 (front left) ESC, capacitor 1 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_37</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL3_B</td><td>ESC_VTOL3_CAP</td><td>Direct capacitor legs soldered: VTOL motor 3 (front left) ESC, capacitor 2 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_left_wing_system">actuators_left_wing_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_10</td><td>26 AWG</td><td>2 (RD, BK)</td><td>SPLIT_L_WING</td><td>SRV_L1_M</td><td>Left wing servo 1 power: 12 V and GND, wing plug to servo</td><td>yes</td><td>26 AWG so it fits the M5 plug cup. Voltage drop about 1.8 V at the 2.2 A peak over 3 m one way (6 m loop). Servo takes 7-15 V.</td></tr>
+<tr><td class="nowrap">W_ACT_11</td><td>26 AWG</td><td>2 (YE, GN)</td><td>SPLIT_L_WING</td><td>SRV_L1_M</td><td>Left wing servo 1 CAN pair, wing plug to servo (twisted pair)</td><td>yes</td><td>Twisted pair. DB-25 CAN pins are adjacent. Servos have no built-in termination (mostly confirmed, not yet measured).</td></tr>
+<tr><td class="nowrap">W_ACT_12</td><td>26 AWG</td><td>2 (RD, BK)</td><td>SPLIT_L_WING</td><td>SRV_L2_M</td><td>Left wing servo 2 power: 12 V and GND, wing plug to servo</td><td>yes</td><td>26 AWG so it fits the M5 plug cup. Voltage drop about 1.8 V at the 2.2 A peak over 3 m one way (6 m loop). Servo takes 7-15 V.</td></tr>
+<tr><td class="nowrap">W_ACT_13</td><td>26 AWG</td><td>2 (YE, GN)</td><td>SPLIT_L_WING</td><td>SRV_L2_M</td><td>Left wing servo 2 CAN pair, wing plug to servo (twisted pair)</td><td>yes</td><td>Twisted pair. DB-25 CAN pins are adjacent. Servos have no built-in termination (mostly confirmed, not yet measured).</td></tr>
+<tr><td class="nowrap">W_ACT_14</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_L_WING</td><td>LED_L1</td><td>Left wing LED 1 (StrobeIT): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Motor-tip StrobeIT, 0.8 A peak at 5 V. Pad order is GND, signal, 5 V (mirrored vs the Pro); wired by pin so polarity is right.</td></tr>
+<tr><td class="nowrap">W_ACT_15</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_L_WING</td><td>LED_L2</td><td>Left wing LED 2 (StrobeIT): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Motor-tip StrobeIT, 0.8 A peak at 5 V. Pad order is GND, signal, 5 V (mirrored vs the Pro); wired by pin so polarity is right.</td></tr>
+<tr><td class="nowrap">W_ACT_16</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_L_WING</td><td>LED_LT</td><td>Left wing wingtip LED (StrobeIT-Pro): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Wingtip StrobeIT-Pro: pad order is 5 V, signal, GND. 0.8 A peak.</td></tr>
+<tr><td class="nowrap">W_ACT_17</td><td>26 AWG</td><td>3 (YE, WH, BK)</td><td>SPLIT_L_WING</td><td>ESC_VTOL3_SIG</td><td>Left wing ESC 1 (forward boom, VTOL motor 3, front left) signal: T, S, signal GND, wing plug to ESC</td><td>yes</td><td>T = telemetry, S = signal, then signal GND. Twist the trio (APD). Left ESC 1 = motor 3, ESC 2 = motor 2; right ESC 1 = motor 1, ESC 2 = motor 4.</td></tr>
+<tr><td class="nowrap">W_ACT_18</td><td>26 AWG</td><td>3 (YE, WH, BK)</td><td>SPLIT_L_WING</td><td>ESC_VTOL2_SIG</td><td>Left wing ESC 2 (aft boom, VTOL motor 2, rear left) signal: T, S, signal GND, wing plug to ESC</td><td>yes</td><td>T = telemetry, S = signal, then signal GND. Twist the trio (APD). Left ESC 1 = motor 3, ESC 2 = motor 2; right ESC 1 = motor 1, ESC 2 = motor 4.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_right_fuselage_system">actuators_right_fuselage_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_30</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>SPLIT_R_FUS</td><td>CAN_SPL_P4</td><td>Right wing servo 1 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)</td><td>yes</td><td>CAN_H, CAN_L (twist) and GND to splitter pins 2, 3, 4. Pin 1 (5 V) empty. GND is the same DB-25 pin as the servo power return.</td></tr>
+<tr><td class="nowrap">W_ACT_31</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>SPLIT_R_FUS</td><td>CAN_SPL_P5</td><td>Right wing servo 2 CAN_H, CAN_L and GND, fuselage DB-25 to CAN splitter (twist CAN_H/CAN_L)</td><td>yes</td><td>CAN_H, CAN_L (twist) and GND to splitter pins 2, 3, 4. Pin 1 (5 V) empty. GND is the same DB-25 pin as the servo power return.</td></tr>
+<tr><td class="nowrap">W_ACT_44</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_SRV3</td><td>SPLIT_R_FUS</td><td>12 V UBEC servo port 3 to right wing servo 1 power (12 V and GND), fuselage DB-25</td><td>yes</td><td>12 V UBEC servo port to the fuselage DB-25 servo power pins. 22 AWG, short. Each servo has its own port (3.3 A max, servo burst 2.2 A).</td></tr>
+<tr><td class="nowrap">W_ACT_45</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_SRV4</td><td>SPLIT_R_FUS</td><td>12 V UBEC servo port 4 to right wing servo 2 power (12 V and GND), fuselage DB-25</td><td>yes</td><td>12 V UBEC servo port to the fuselage DB-25 servo power pins. 22 AWG, short. Each servo has its own port (3.3 A max, servo burst 2.2 A).</td></tr>
+<tr><td class="nowrap">W_ACT_49</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED4</td><td>SPLIT_R_FUS</td><td>5 V UBEC servo port 4 to right wing LED 1 power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_50</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED5</td><td>SPLIT_R_FUS</td><td>5 V UBEC servo port 5 to right wing LED 2 power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_51</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC5_LED6</td><td>SPLIT_R_FUS</td><td>5 V UBEC servo port 6 to right wingtip LED power (5 V and GND), fuselage DB-25</td><td>yes</td><td>5 V UBEC servo port to the fuselage DB-25 LED power pins (5 V and GND). 22 AWG, short. LED 0.8 A peak, port 3.3 A max.</td></tr>
+<tr><td class="nowrap">W_ACT_52</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_AUX1</td><td>SPLIT_R_FUS</td><td>Cube AUX 1 to VTOL motor 1 (front right) ESC signal and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube AUX OUT (DShot-capable) signal and ground to the fuselage DB-25 ESC pins, then on through the wing cable. Twist the pair. Long run: DShot margin to check. Telemetry T not wired.</td></tr>
+<tr><td class="nowrap">W_ACT_55</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_AUX4</td><td>SPLIT_R_FUS</td><td>Cube AUX 4 to VTOL motor 4 (rear right) ESC signal and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube AUX OUT (DShot-capable) signal and ground to the fuselage DB-25 ESC pins, then on through the wing cable. Twist the pair. Long run: DShot margin to check. Telemetry T not wired.</td></tr>
+<tr><td class="nowrap">W_ACT_60</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN4</td><td>SPLIT_R_FUS</td><td>Cube MAIN 4 to right wing LED 1 PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+<tr><td class="nowrap">W_ACT_61</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN5</td><td>SPLIT_R_FUS</td><td>Cube MAIN 5 to right wing LED 2 PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+<tr><td class="nowrap">W_ACT_62</td><td>26 AWG</td><td>2 (WH, BK)</td><td>FC_MAIN6</td><td>SPLIT_R_FUS</td><td>Cube MAIN 6 to right wingtip LED PWM and ground, fuselage DB-25 (twisted pair)</td><td>yes</td><td>Cube MAIN OUT PWM and ground to the fuselage DB-25 LED pins. Slow servo PWM, so run length is not critical. Ground joins the UBEC return on the same DB-25 pin. LEDs could share one output if needed.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_right_motors_system">actuators_right_motors_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_01</td><td>10 AWG</td><td>2 (RD, BK)</td><td>XT90_VTOL1_M</td><td>ESC_VTOL1_IN</td><td>VTOL motor 1 (front right) power, wing split to ESC</td><td>yes</td><td>Same 10 AWG as the fuselage side. Keep short (APD: more capacitance beyond 12 cm). 8 AWG if long or hot.</td></tr>
+<tr><td class="nowrap">W_ACT_04</td><td>10 AWG</td><td>2 (RD, BK)</td><td>XT90_VTOL4_M</td><td>ESC_VTOL4_IN</td><td>VTOL motor 4 (rear right) power, wing split to ESC</td><td>yes</td><td>Same 10 AWG as the fuselage side. Keep short (APD: more capacitance beyond 12 cm). 8 AWG if long or hot.</td></tr>
+<tr><td class="nowrap">W_ACT_05</td><td>none (component&#x27;s own leads)</td><td>3 (YE, GN, BU)</td><td>ESC_VTOL1_PH</td><td>MOT_VTOL1</td><td>VTOL motor 1 (front right) phase leads</td><td>no</td><td>Motor&#x27;s own leads, gauge unknown (not in the listing); use 10 AWG if ever extended. Phase order only sets spin direction.</td></tr>
+<tr><td class="nowrap">W_ACT_08</td><td>none (component&#x27;s own leads)</td><td>3 (YE, GN, BU)</td><td>ESC_VTOL4_PH</td><td>MOT_VTOL4</td><td>VTOL motor 4 (rear right) phase leads</td><td>no</td><td>Motor&#x27;s own leads, gauge unknown (not in the listing); use 10 AWG if ever extended. Phase order only sets spin direction.</td></tr>
+<tr><td class="nowrap">W_ACT_32</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL1_A</td><td>ESC_VTOL1_CAP</td><td>Direct capacitor legs soldered: VTOL motor 1 (front right) ESC, capacitor 1 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_33</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL1_B</td><td>ESC_VTOL1_CAP</td><td>Direct capacitor legs soldered: VTOL motor 1 (front right) ESC, capacitor 2 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_38</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL4_A</td><td>ESC_VTOL4_CAP</td><td>Direct capacitor legs soldered: VTOL motor 4 (rear right) ESC, capacitor 1 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+<tr><td class="nowrap">W_ACT_39</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>CAP_VTOL4_B</td><td>ESC_VTOL4_CAP</td><td>Direct capacitor legs soldered: VTOL motor 4 (rear right) ESC, capacitor 2 of 2</td><td>no</td><td>Not a wire: the capacitor&#x27;s own legs soldered to the ESC pads. 330 uF 50 V capacitors from the ESC box; the harness models two per ESC in parallel, the APD table says one (count to be checked). Legs as short as possible.</td></tr>
+</tbody>
+</table></div>
+<h2 id="actuators_right_wing_system">actuators_right_wing_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_ACT_19</td><td>26 AWG</td><td>2 (RD, BK)</td><td>SPLIT_R_WING</td><td>SRV_R1_M</td><td>Right wing servo 1 power: 12 V and GND, wing plug to servo</td><td>yes</td><td>26 AWG so it fits the M5 plug cup. Voltage drop about 1.8 V at the 2.2 A peak over 3 m one way (6 m loop). Servo takes 7-15 V.</td></tr>
+<tr><td class="nowrap">W_ACT_20</td><td>26 AWG</td><td>2 (YE, GN)</td><td>SPLIT_R_WING</td><td>SRV_R1_M</td><td>Right wing servo 1 CAN pair, wing plug to servo (twisted pair)</td><td>yes</td><td>Twisted pair. DB-25 CAN pins are adjacent. Servos have no built-in termination (mostly confirmed, not yet measured).</td></tr>
+<tr><td class="nowrap">W_ACT_21</td><td>26 AWG</td><td>2 (RD, BK)</td><td>SPLIT_R_WING</td><td>SRV_R2_M</td><td>Right wing servo 2 power: 12 V and GND, wing plug to servo</td><td>yes</td><td>26 AWG so it fits the M5 plug cup. Voltage drop about 1.8 V at the 2.2 A peak over 3 m one way (6 m loop). Servo takes 7-15 V.</td></tr>
+<tr><td class="nowrap">W_ACT_22</td><td>26 AWG</td><td>2 (YE, GN)</td><td>SPLIT_R_WING</td><td>SRV_R2_M</td><td>Right wing servo 2 CAN pair, wing plug to servo (twisted pair)</td><td>yes</td><td>Twisted pair. DB-25 CAN pins are adjacent. Servos have no built-in termination (mostly confirmed, not yet measured).</td></tr>
+<tr><td class="nowrap">W_ACT_23</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_R_WING</td><td>LED_R1</td><td>Right wing LED 1 (StrobeIT): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Motor-tip StrobeIT, 0.8 A peak at 5 V. Pad order is GND, signal, 5 V (mirrored vs the Pro); wired by pin so polarity is right.</td></tr>
+<tr><td class="nowrap">W_ACT_24</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_R_WING</td><td>LED_R2</td><td>Right wing LED 2 (StrobeIT): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Motor-tip StrobeIT, 0.8 A peak at 5 V. Pad order is GND, signal, 5 V (mirrored vs the Pro); wired by pin so polarity is right.</td></tr>
+<tr><td class="nowrap">W_ACT_25</td><td>22 AWG</td><td>3 (RD, WH, BK)</td><td>SPLIT_R_WING</td><td>LED_RT</td><td>Right wing wingtip LED (StrobeIT-Pro): 5 V, signal, GND, wing plug to LED</td><td>yes</td><td>Wingtip StrobeIT-Pro: pad order is 5 V, signal, GND. 0.8 A peak.</td></tr>
+<tr><td class="nowrap">W_ACT_26</td><td>26 AWG</td><td>3 (YE, WH, BK)</td><td>SPLIT_R_WING</td><td>ESC_VTOL1_SIG</td><td>Right wing ESC 1 (forward boom, VTOL motor 1, front right) signal: T, S, signal GND, wing plug to ESC</td><td>yes</td><td>T = telemetry, S = signal, then signal GND. Twist the trio (APD). Left ESC 1 = motor 3, ESC 2 = motor 2; right ESC 1 = motor 1, ESC 2 = motor 4.</td></tr>
+<tr><td class="nowrap">W_ACT_27</td><td>26 AWG</td><td>3 (YE, WH, BK)</td><td>SPLIT_R_WING</td><td>ESC_VTOL4_SIG</td><td>Right wing ESC 2 (aft boom, VTOL motor 4, rear right) signal: T, S, signal GND, wing plug to ESC</td><td>yes</td><td>T = telemetry, S = signal, then signal GND. Twist the trio (APD). Left ESC 1 = motor 3, ESC 2 = motor 2; right ESC 1 = motor 1, ESC 2 = motor 4.</td></tr>
+</tbody>
+</table></div>
+<h2 id="cellular_system">cellular_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_CEL_01</td><td>none (component&#x27;s own leads)</td><td>4 (WHOG, OG, WHGN, GN)</td><td>A8M_NET</td><td>A8M_RJ45</td><td>A8-MINI Ethernet pins to RJ45 plug. Two twisted pairs, crossover wiring (see comments).</td><td>no</td><td>Supplied by SIYI (housing to RJ45 plug), not bought; gauge is the camera cable&#x27;s own. Two twisted pairs, crossover: camera RX pair lands on RJ45 1/2, TX pair on 3/6.</td></tr>
+<tr><td class="nowrap">W_CEL_04</td><td>none (component&#x27;s own leads)</td><td>4 (RD, RD, BK, BK)</td><td>A8M_PWR</td><td>A8M_XT30_M</td><td>A8-MINI power port to XT30 male. Wires 1, 2 = power (red), 3, 4 = GND (black).</td><td>no</td><td>Two wires per polarity: red pair to the two power pins, black pair to the two GND pins, joined at the XT30 pin. Power input is 3S-6S, fed 12 V from the 12 V UBEC (W_CEL_07). Supplied by SIYI (housing to XT30U-M), not bought; gauge is the camera cable&#x27;s own.</td></tr>
+<tr><td class="nowrap">W_CEL_02</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV1_EXT_F</td><td>WAV1_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 1, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
+<tr><td class="nowrap">W_CEL_03</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV2_EXT_F</td><td>WAV2_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 2, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
+<tr><td class="nowrap">W_CEL_06</td><td>16 AWG</td><td>2 (YE, BK)</td><td>UBEC12_HP</td><td>JET_XT30_F</td><td>Factory HP output leads of the 12 V UBEC to the XT30U-F on the Jetson power path</td><td>no</td><td>12 V UBEC factory HP output leads (yellow/black, about 0.21 m) to the XT30U-F on the Jetson power path. About 4.8 A worst case. Keep 16 AWG if extended.</td></tr>
+<tr><td class="nowrap">W_CEL_08</td><td>18 AWG</td><td>2 (RD, BK)</td><td>JET_XT30_M</td><td>JET_PWR</td><td>XT30U-M pigtail soldered to the Jetson board power pads</td><td>yes</td><td>XT30U-M pigtail soldered straight onto the Jetson base board power pads. About 4.8 A worst case (6 A with a 40 W module). 18 AWG is a placeholder; the pad size sets the real limit.</td></tr>
+<tr><td class="nowrap">W_CEL_07</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_CAM</td><td>A8M_XT30_F</td><td>12 V UBEC servo port 5 to the camera XT30 female (power and ground)</td><td>yes</td><td>12 V UBEC servo port 5 to the camera XT30 female. Camera is 1 A peak; port limit 3.3 A.</td></tr>
+<tr><td class="nowrap">W_CEL_05</td><td>28 AWG</td><td>3 (YE, GN, BK)</td><td>FC_TELEM2</td><td>U2T_UART</td><td>Cube TELEM2 to TTL-to-USB converter UART</td><td>yes</td><td>3.3 V UART (MAVLink). Yellow = Cube TX to converter RXD, green = Cube RX from converter TXD. Converter and its UART connector not chosen; 28 AWG is a placeholder.</td></tr>
+</tbody>
+</table></div>
+<h2 id="flight_control_system">flight_control_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_FC_01</td><td>26 AWG</td><td>6 (RD, RD, YE, BU, BK, BK)</td><td>PDB_FC_PWR</td><td>FC_POWER1</td><td>PDB analog power output to Cube POWER1</td><td>yes</td><td>26 AWG is the one size both crimps take (GH 26-30, CLIK-Mate 22-26). Load well under 1 A. Two 5 V, current sense, voltage sense, two GND.</td></tr>
+<tr><td class="nowrap">W_FC_02</td><td>26 AWG</td><td>4 (RD, YE, GN, BK)</td><td>FC_CAN1</td><td>GPS_CAN1_1</td><td>Cube CAN1 to GPS. Twist CAN_H/CAN_L.</td><td>yes</td><td>GPS draws up to 250 mA. Twist CAN_H/CAN_L. GPS is not the end node (CAN_TERM = 0).</td></tr>
+<tr><td class="nowrap">W_FC_03</td><td>26 AWG</td><td>4 (RD, YE, GN, BK)</td><td>GPS_CAN1_2</td><td>ARSP_CAN</td><td>GPS CAN1.2 to airspeed sensor (daisy chain). Twist CAN_H/CAN_L; long run.</td><td>yes</td><td>Daisy chain behind the GPS. About 50 mA. Expected long: keep CAN twisted, consider shielding. Airspeed pin order is assumed; far-end termination undecided (Sierra default is off).</td></tr>
+<tr><td class="nowrap">W_FC_04</td><td>26 AWG</td><td>4 (RD, YE, GN, BK)</td><td>FC_GPS2</td><td>LRF_COMM</td><td>Cube GPS2 to GRF-500 (serial). Wires: 1 5 V, 2 sensor TXD to Cube RX, 3 Cube TX to sensor RXD, 4 GND.</td><td>yes</td><td>120 mA typical, 250 mA at start-up: about 0.07 V per metre of cable on 26 AWG. The sensor end is the LightWare Pixhawk adapter (the SUR housing takes 32 AWG only): recheck the gauge and whether this wire is needed once the adapter connector is known.</td></tr>
+<tr><td class="nowrap">W_FC_05</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>FC_CAN2</td><td>CAN_SPL_P1</td><td>Cube CAN2 to CAN splitter port 1. Twist CAN_H/CAN_L.</td><td>yes</td><td>CAN_H, CAN_L (twist) and GND to splitter port 1. 5 V pin not wired.</td></tr>
+</tbody>
+</table></div>
+<h2 id="power_system">power_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_PWR_01</td><td>16 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>UBEC12_IN</td><td>Factory input leads of the 12 V UBEC</td><td>no</td><td>12 V KDE UBEC&#x27;s own factory input leads (about 0.21 m). Keep 16 AWG if extended. Placeholder pad pair ESC7 on the PDB.</td></tr>
+<tr><td class="nowrap">W_PWR_02</td><td>16 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>UBEC5_IN</td><td>Factory input leads of the 5 V UBEC</td><td>no</td><td>5 V KDE UBEC&#x27;s own factory input leads (about 0.21 m). Keep 16 AWG if extended. Placeholder pad pair ESC8 on the PDB.</td></tr>
+<tr><td class="nowrap">W_PWR_03</td><td>24 AWG</td><td>2 (WH, BK)</td><td>PDB_SW</td><td>SW_BTN</td><td>PDB soft switch to pushbutton</td><td>yes</td><td>Plain two-wire contact; polarity does not matter.</td></tr>
+<tr><td class="nowrap">W_PWR_04</td><td>none (component&#x27;s own leads)</td><td>2 (RD, BK)</td><td>PDB_J2BAT</td><td>CAP_BAT</td><td>Capacitor leads, short as possible</td><td>no</td><td>Capacitor leads, short as possible. 220 uF 100 V capacitor across the battery bolts (J2); not yet picked.</td></tr>
+<tr><td class="nowrap">W_PWR_05</td><td>10 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>XT90_VTOL1_F</td><td>VTOL motor 1 (front right) power, PDB to wing split</td><td>yes</td><td>About 75-80 A at full throttle per motor; 8 AWG if the run is long or hot. Check fit on the PDB pads and XT90 cups. PDB pad pair follows the motor number.</td></tr>
+<tr><td class="nowrap">W_PWR_06</td><td>10 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>XT90_VTOL2_F</td><td>VTOL motor 2 (rear left) power, PDB to wing split</td><td>yes</td><td>About 75-80 A at full throttle per motor; 8 AWG if the run is long or hot. Check fit on the PDB pads and XT90 cups. PDB pad pair follows the motor number.</td></tr>
+<tr><td class="nowrap">W_PWR_07</td><td>10 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>XT90_VTOL3_F</td><td>VTOL motor 3 (front left) power, PDB to wing split</td><td>yes</td><td>About 75-80 A at full throttle per motor; 8 AWG if the run is long or hot. Check fit on the PDB pads and XT90 cups. PDB pad pair follows the motor number.</td></tr>
+<tr><td class="nowrap">W_PWR_08</td><td>10 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>XT90_VTOL4_F</td><td>VTOL motor 4 (rear right) power, PDB to wing split</td><td>yes</td><td>About 75-80 A at full throttle per motor; 8 AWG if the run is long or hot. Check fit on the PDB pads and XT90 cups. PDB pad pair follows the motor number.</td></tr>
+<tr><td class="nowrap">W_PWR_09</td><td>10 AWG</td><td>2 (RD, BK)</td><td>PDB_ESC</td><td>ESC_FWD_IN</td><td>Forward ESC power, PDB to ESC</td><td>yes</td><td>Expected up to about 80 A. Keep short (APD: long ESC input wires cause braking spikes). PDB pad pair ESC5.</td></tr>
+</tbody>
+</table></div>
+<h2 id="rf_system">rf_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_RF_01</td><td>26 AWG</td><td>3 (YE, GN, BK)</td><td>FC_TELEM1</td><td>RF_P3</td><td>Cube TELEM1 to radio UART</td><td>yes</td><td>3.3 V UART. Yellow = Cube TX to radio RX, green = Cube RX from radio TX. Shield or twist if the run is long or noisy.</td></tr>
+<tr><td class="nowrap">W_RF_02</td><td>26 AWG</td><td>4 (OG, WHOG, GN, WHGN)</td><td>RF_P2</td><td>RF_RJ45</td><td>Radio Ethernet port 2 to RJ45 plug. Two twisted pairs, crossover wiring (see comments).</td><td>yes</td><td>Two twisted pairs (T568B colours), crossover: radio RX pair lands on RJ45 1/2, TX pair on 3/6. Radio port is 100 Base-T, so RJ45 pins 4, 5, 7, 8 are empty. Gauge is a placeholder; shield undecided.</td></tr>
+<tr><td class="nowrap">W_RF_03</td><td>26 AWG</td><td>6 (RD, RD, RD, BK, BK, BK)</td><td>RF_UBEC_HP</td><td>RF_P4</td><td>5 V UBEC HP leads to radio port 4. Wires 1 to 3 = 5 V (red), 4 to 6 = GND (black).</td><td>yes</td><td>5 V UBEC HP leads to radio port 4: three wires per polarity (a GH contact is 1 A). About 0.2 V drop per 1.5 m at 1.6 A against a 0.25 V budget (radio is 5 V +/- 5 %): keep it short.</td></tr>
+</tbody>
+</table></div>
+</body>
+</html>

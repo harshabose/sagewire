@@ -1,0 +1,51 @@
+Id,Category,Description,Qty,Unit,Manufacturer,MPN,Designators,Harnesses
+1,Parts,"5G dongle board, USB to M.2 Key B (modem not included)",2,,Waveshare,USB TO M.2 B KEY,"WAV1, WAV2",cellular_system
+2,Parts,"5G modem, M.2 Key B (30 x 52 mm)",2,,Telit Cinterion,FN990A28-HP,"WAV1_MOD, WAV2_MOD",cellular_system
+3,Parts,"Airspeed sensor, TrueSpeed V2 (DroneCAN)",1,,Sierra,SA-TSPD 0019,SPD,flight_control_system
+4,Parts,"Base board, Jetson Orin Nano/NX, dual Ethernet",1,,Waveshare,JETSON-ORIN-IO-BASE-B,JET_BASE,cellular_system
+5,Parts,"CAN splitter, 6-port passive, DroneCAN",1,,SwiftWing,,CAN_SPL,flight_control_system
+6,Parts,"Capacitor, electrolytic 220 uF 100 V, low-ESR",1,,,,CAP_BAT,power_system
+7,Parts,"Capacitor, electrolytic 330 uF 50 V (supplied with the ESC)",10,,,,"CAP_FWD_A, CAP_FWD_B, CAP_VTOL1_A, CAP_VTOL1_B, CAP_VTOL2_A, CAP_VTOL2_B, CAP_VTOL3_A, CAP_VTOL3_B, CAP_VTOL4_A, CAP_VTOL4_B","actuators_frw_system, actuators_left_motors_system, actuators_right_motors_system"
+8,Parts,"Compute module, Jetson Orin NX 16GB",1,,NVIDIA,,JET_MOD,cellular_system
+9,Parts,"Converter, USB to TTL UART (3.3 V logic)",1,,,,U2T,cellular_system
+10,Parts,"ESC, 120F3[X]v2",5,,APD,100785,"ESC_FWD, ESC_VTOL1, ESC_VTOL2, ESC_VTOL3, ESC_VTOL4","actuators_frw_system, actuators_left_motors_system, actuators_right_motors_system"
+11,Parts,"Flight controller, Cube Orange+ Standard Set with ADS-B carrier board",1,,CubePilot,HX4-06222,FCT,flight_control_system
+12,Parts,"Gimbal camera, A8 mini",1,,SIYI,A8 mini,A8M,cellular_system
+13,Parts,"GNSS receiver, PrecisionPoint-Pro (DroneCAN)",1,,Sierra,,GPS,flight_control_system
+14,Parts,"Laser rangefinder, GRF-500",1,,LightWare,GRF-500,LDR,flight_control_system
+15,Parts,"Motor, 8020 PRO 120KV (VTOL)",4,,Vector Technics,,"MOT_VTOL1, MOT_VTOL2, MOT_VTOL3, MOT_VTOL4","actuators_left_motors_system, actuators_right_motors_system"
+16,Parts,"Motor, VT4130 FW (forward thrust)",1,,Vector Technics,,MOT_FWD,actuators_frw_system
+17,Parts,"Power distribution board, 400 A",1,,axldrone,PDB 400A,PDB,power_system
+18,Parts,"Pushbutton switch, 16 mm latching, metal, LED ring",1,,ProMax,PPS16006RL-11F,SW_BTN,power_system
+19,Parts,"Radio, Mesh Rider Mini",1,,Doodle Labs,RM-1400-42M3,AIR,rf_system
+20,Parts,"Servo, Z1500-12V (DroneCAN)",4,,Zeus,Z1500-12V,"SRV_L1, SRV_L2, SRV_R1, SRV_R2","actuators_left_wing_system, actuators_right_wing_system"
+21,Parts,"Strobe light, StrobeIT (RGB LED, 5 V)",4,,Teravolt,StrobeIT,"LED_L1, LED_L2, LED_R1, LED_R2","actuators_left_wing_system, actuators_right_wing_system"
+22,Parts,"Strobe light, StrobeIT-Pro (R/G-W LED, 5 V)",2,,Teravolt,StrobeIT-Pro,"LED_LT, LED_RT","actuators_left_wing_system, actuators_right_wing_system"
+23,Parts,"UBEC, KDE UBECUVC (selectable 5, 6, 8, 12 V output)",2,,KDE Direct,KDE-UBECUVC,"UBEC12, UBEC5",power_system
+24,Connectors,"Connector, D-sub DB-25 plug, male, 25 pins",2,,,,"SPLIT_L_WING, SPLIT_R_WING","actuators_left_wing_system, actuators_right_wing_system"
+25,Connectors,"Connector, D-sub DB-25 socket, female, 25 pins",2,,,,"SPLIT_L_FUS, SPLIT_R_FUS","actuators_left_fuselage_system, actuators_right_fuselage_system"
+26,Connectors,"Connector, JST GH 4-pin plug housing, female, 4 pins",12,,JST,GHR-04V-S,"ARSP_CAN, CAN_SPL_P1, CAN_SPL_P2, CAN_SPL_P3, CAN_SPL_P4, CAN_SPL_P5, FC_CAN1, FC_CAN2, GPS_CAN1_1, GPS_CAN1_2, RF_P2, RF_P3","actuators_left_fuselage_system, actuators_right_fuselage_system, flight_control_system, rf_system"
+27,Connectors,"Connector, JST GH 6-pin plug housing, female, 6 pins",5,,JST,GHR-06V-S,"FC_GPS2, FC_TELEM1, FC_TELEM2, PDB_FC_PWR, RF_P4","cellular_system, flight_control_system, rf_system"
+28,Connectors,"Connector, JST XH 2-pin plug housing, female, 2 pins",1,,JST,XHP-2,PDB_SW,power_system
+29,Connectors,"Connector, LightWare Pixhawk adapter for GRF series, 8 pins",1,,LightWare,ACC_PX_08SUR-32S,LRF_COMM,flight_control_system
+30,Connectors,"Connector, M5 waterproof 4-pin male plug (cable end), male, 4 pins",4,,,,"SRV_L1_M, SRV_L2_M, SRV_R1_M, SRV_R2_M","actuators_left_wing_system, actuators_right_wing_system"
+31,Connectors,"Connector, Molex CLIK-Mate 2.00 mm 6-pin housing, 6 pins",1,,Molex,502439-0600,FC_POWER1,flight_control_system
+32,Connectors,"Connector, Molex KK 254 3-pin housing (DuPont), female, 3 pins",22,,Molex,,"FC_AUX1, FC_AUX2, FC_AUX3, FC_AUX4, FC_AUX5, FC_MAIN1, FC_MAIN2, FC_MAIN3, FC_MAIN4, FC_MAIN5, FC_MAIN6, UBEC12_CAM, UBEC12_SRV1, UBEC12_SRV2, UBEC12_SRV3, UBEC12_SRV4, UBEC5_LED1, UBEC5_LED2, UBEC5_LED3, UBEC5_LED4, UBEC5_LED5, UBEC5_LED6","actuators_frw_system, actuators_left_fuselage_system, actuators_right_fuselage_system, cellular_system"
+33,Connectors,"Connector, RJ45 plug (8P8C), male, 8 pins",1,,,,RF_RJ45,rf_system
+34,Connectors,"Connector, USB Type-A female breakout board, female, 4 pins",2,,,,"WAV1_EXT_F, WAV2_EXT_F",cellular_system
+35,Connectors,"Connector, USB Type-A male breakout board, male, 4 pins",2,,,,"WAV1_EXT_M, WAV2_EXT_M",cellular_system
+36,Connectors,"Connector, XT30U female, female, 2 pins",2,,Amass,XT30U-F,"A8M_XT30_F, JET_XT30_F",cellular_system
+37,Connectors,"Connector, XT30U male, male, 2 pins",1,,Amass,XT30U-M,JET_XT30_M,cellular_system
+38,Connectors,"Connector, XT90 female (plain), female, 2 pins",4,,Amass,,"XT90_VTOL1_F, XT90_VTOL2_F, XT90_VTOL3_F, XT90_VTOL4_F",power_system
+39,Connectors,"Connector, XT90 male (plain), male, 2 pins",4,,Amass,,"XT90_VTOL1_M, XT90_VTOL2_M, XT90_VTOL3_M, XT90_VTOL4_M","actuators_left_motors_system, actuators_right_motors_system"
+40,Wire,"Cable, 2 x 10 AWG",0,m,,,"W_ACT_01, W_ACT_02, W_ACT_03, W_ACT_04, W_PWR_05, W_PWR_06, W_PWR_07, W_PWR_08, W_PWR_09","actuators_left_motors_system, actuators_right_motors_system, power_system"
+41,Wire,"Cable, 2 x 18 AWG",0,m,,,W_CEL_08,cellular_system
+42,Wire,"Cable, 2 x 22 AWG",0,m,,,"W_ACT_42, W_ACT_43, W_ACT_44, W_ACT_45, W_ACT_46, W_ACT_47, W_ACT_48, W_ACT_49, W_ACT_50, W_ACT_51, W_CEL_07","actuators_left_fuselage_system, actuators_right_fuselage_system, cellular_system"
+43,Wire,"Cable, 2 x 24 AWG",0,m,,,W_PWR_03,power_system
+44,Wire,"Cable, 2 x 26 AWG",0,m,,,"W_ACT_10, W_ACT_11, W_ACT_12, W_ACT_13, W_ACT_19, W_ACT_20, W_ACT_21, W_ACT_22, W_ACT_52, W_ACT_53, W_ACT_54, W_ACT_55, W_ACT_56, W_ACT_57, W_ACT_58, W_ACT_59, W_ACT_60, W_ACT_61, W_ACT_62","actuators_frw_system, actuators_left_fuselage_system, actuators_left_wing_system, actuators_right_fuselage_system, actuators_right_wing_system"
+45,Wire,"Cable, 3 x 22 AWG",0,m,,,"W_ACT_14, W_ACT_15, W_ACT_16, W_ACT_23, W_ACT_24, W_ACT_25","actuators_left_wing_system, actuators_right_wing_system"
+46,Wire,"Cable, 3 x 26 AWG",0,m,,,"W_ACT_17, W_ACT_18, W_ACT_26, W_ACT_27, W_ACT_28, W_ACT_29, W_ACT_30, W_ACT_31, W_FC_05, W_RF_01","actuators_left_fuselage_system, actuators_left_wing_system, actuators_right_fuselage_system, actuators_right_wing_system, flight_control_system, rf_system"
+47,Wire,"Cable, 3 x 28 AWG",0,m,,,W_CEL_05,cellular_system
+48,Wire,"Cable, 4 x 22 AWG",0,m,,,"W_CEL_02, W_CEL_03",cellular_system
+49,Wire,"Cable, 4 x 26 AWG",0,m,,,"W_FC_02, W_FC_03, W_FC_04, W_RF_02","flight_control_system, rf_system"
+50,Wire,"Cable, 6 x 26 AWG",0,m,,,"W_FC_01, W_RF_03","flight_control_system, rf_system"
