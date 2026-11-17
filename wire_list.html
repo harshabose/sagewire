@@ -37,6 +37,7 @@ td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
 <li><a href="#actuators_right_fuselage_system">actuators_right_fuselage_system.yaml</a> (<a href="actuators_right_fuselage_system.html">diagram</a>)</li>
 <li><a href="#actuators_right_motors_system">actuators_right_motors_system.yaml</a> (<a href="actuators_right_motors_system.html">diagram</a>)</li>
 <li><a href="#actuators_right_wing_system">actuators_right_wing_system.yaml</a> (<a href="actuators_right_wing_system.html">diagram</a>)</li>
+<li><a href="#cellular_dongles_system">cellular_dongles_system.yaml</a> (<a href="cellular_dongles_system.html">diagram</a>)</li>
 <li><a href="#cellular_system">cellular_system.yaml</a> (<a href="cellular_system.html">diagram</a>)</li>
 <li><a href="#flight_control_system">flight_control_system.yaml</a> (<a href="flight_control_system.html">diagram</a>)</li>
 <li><a href="#power_system">power_system.yaml</a> (<a href="power_system.html">diagram</a>)</li>
@@ -146,14 +147,20 @@ td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
 <tr><td class="nowrap">W_ACT_27</td><td>26 AWG</td><td>3 (YE, WH, BK)</td><td>SPLIT_R_WING</td><td>ESC_VTOL4_SIG</td><td>Right wing ESC 2 (aft boom, VTOL motor 4, rear right) signal: T, S, signal GND, wing plug to ESC</td><td>yes</td><td>T = telemetry, S = signal, then signal GND. Twist the trio (APD). Left ESC 1 = motor 3, ESC 2 = motor 2; right ESC 1 = motor 1, ESC 2 = motor 4.</td></tr>
 </tbody>
 </table></div>
+<h2 id="cellular_dongles_system">cellular_dongles_system.yaml</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
+<tbody>
+<tr><td class="nowrap">W_CEL_02</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV1_EXT_F</td><td>WAV1_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 1, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
+<tr><td class="nowrap">W_CEL_03</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV2_EXT_F</td><td>WAV2_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 2, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
+</tbody>
+</table></div>
 <h2 id="cellular_system">cellular_system.yaml</h2>
 <div class="table-wrap"><table>
 <thead><tr><th>ID</th><th>Gauge</th><th>Wires (colours)</th><th>From</th><th>To</th><th>What it connects</th><th>BOM</th><th>Comments</th></tr></thead>
 <tbody>
 <tr><td class="nowrap">W_CEL_01</td><td>none (component&#x27;s own leads)</td><td>4 (WHOG, OG, WHGN, GN)</td><td>A8M_NET</td><td>A8M_RJ45</td><td>A8-MINI Ethernet pins to RJ45 plug. Two twisted pairs, crossover wiring (see comments).</td><td>no</td><td>Supplied by SIYI (housing to RJ45 plug), not bought; gauge is the camera cable&#x27;s own. Two twisted pairs, crossover: camera RX pair lands on RJ45 1/2, TX pair on 3/6.</td></tr>
 <tr><td class="nowrap">W_CEL_04</td><td>none (component&#x27;s own leads)</td><td>4 (RD, RD, BK, BK)</td><td>A8M_PWR</td><td>A8M_XT30_M</td><td>A8-MINI power port to XT30 male. Wires 1, 2 = power (red), 3, 4 = GND (black).</td><td>no</td><td>Two wires per polarity: red pair to the two power pins, black pair to the two GND pins, joined at the XT30 pin. Power input is 3S-6S, fed 12 V from the 12 V UBEC (W_CEL_07). Supplied by SIYI (housing to XT30U-M), not bought; gauge is the camera cable&#x27;s own.</td></tr>
-<tr><td class="nowrap">W_CEL_02</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV1_EXT_F</td><td>WAV1_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 1, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
-<tr><td class="nowrap">W_CEL_03</td><td>22 AWG</td><td>4 (RD, WH, GN, BK)</td><td>WAV2_EXT_F</td><td>WAV2_EXT_M</td><td>USB 2.0 power (VBUS), data and ground for dongle 2, powered from the Jetson USB jack.</td><td>yes</td><td>VBUS, USB 2.0 data pair (twist) and GND. Dongle needs about 2 A from the Jetson USB jack (check the port limit), so 22 AWG for the whole cable.</td></tr>
 <tr><td class="nowrap">W_CEL_06</td><td>16 AWG</td><td>2 (YE, BK)</td><td>UBEC12_HP</td><td>JET_XT30_F</td><td>Factory HP output leads of the 12 V UBEC to the XT30U-F on the Jetson power path</td><td>no</td><td>12 V UBEC factory HP output leads (yellow/black, about 0.21 m) to the XT30U-F on the Jetson power path. About 4.8 A worst case. Keep 16 AWG if extended.</td></tr>
 <tr><td class="nowrap">W_CEL_08</td><td>18 AWG</td><td>2 (RD, BK)</td><td>JET_XT30_M</td><td>JET_PWR</td><td>XT30U-M pigtail soldered to the Jetson board power pads</td><td>yes</td><td>XT30U-M pigtail soldered straight onto the Jetson base board power pads. About 4.8 A worst case (6 A with a 40 W module). 18 AWG is a placeholder; the pad size sets the real limit.</td></tr>
 <tr><td class="nowrap">W_CEL_07</td><td>22 AWG</td><td>2 (RD, BK)</td><td>UBEC12_CAM</td><td>A8M_XT30_F</td><td>12 V UBEC servo port 5 to the camera XT30 female (power and ground)</td><td>yes</td><td>12 V UBEC servo port 5 to the camera XT30 female. Camera is 1 A peak; port limit 3.3 A.</td></tr>

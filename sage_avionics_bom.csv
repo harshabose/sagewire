@@ -1,6 +1,6 @@
 Id,Category,Description,Qty,Unit,Manufacturer,MPN,Designators,Harnesses
-1,Parts,"5G dongle board, USB to M.2 Key B (modem not included)",2,,Waveshare,USB TO M.2 B KEY,"WAV1, WAV2",cellular_system
-2,Parts,"5G modem, M.2 Key B (30 x 52 mm)",2,,Telit Cinterion,FN990A28-HP,"WAV1_MOD, WAV2_MOD",cellular_system
+1,Parts,"5G dongle board, USB to M.2 Key B (modem not included)",2,,Waveshare,USB TO M.2 B KEY,"WAV1, WAV2",cellular_dongles_system
+2,Parts,"5G modem, M.2 Key B (30 x 52 mm)",2,,Telit Cinterion,FN990A28-HP,"WAV1_MOD, WAV2_MOD",cellular_dongles_system
 3,Parts,"Airspeed sensor, TrueSpeed V2 (DroneCAN)",1,,Sierra,SA-TSPD 0019,SPD,flight_control_system
 4,Parts,"Base board, Jetson Orin Nano/NX, dual Ethernet",1,,Waveshare,JETSON-ORIN-IO-BASE-B,JET_BASE,cellular_system
 5,Parts,"CAN splitter, 6-port passive, DroneCAN",1,,SwiftWing,,CAN_SPL,flight_control_system
@@ -32,8 +32,8 @@ Id,Category,Description,Qty,Unit,Manufacturer,MPN,Designators,Harnesses
 31,Connectors,"Connector, Molex CLIK-Mate 2.00 mm 6-pin housing, 6 pins",1,,Molex,502439-0600,FC_POWER1,flight_control_system
 32,Connectors,"Connector, Molex KK 254 3-pin housing (DuPont), female, 3 pins",22,,Molex,,"FC_AUX1, FC_AUX2, FC_AUX3, FC_AUX4, FC_AUX5, FC_MAIN1, FC_MAIN2, FC_MAIN3, FC_MAIN4, FC_MAIN5, FC_MAIN6, UBEC12_CAM, UBEC12_SRV1, UBEC12_SRV2, UBEC12_SRV3, UBEC12_SRV4, UBEC5_LED1, UBEC5_LED2, UBEC5_LED3, UBEC5_LED4, UBEC5_LED5, UBEC5_LED6","actuators_frw_system, actuators_left_fuselage_system, actuators_right_fuselage_system, cellular_system"
 33,Connectors,"Connector, RJ45 plug (8P8C), male, 8 pins",1,,,,RF_RJ45,rf_system
-34,Connectors,"Connector, USB Type-A female breakout board, female, 4 pins",2,,,,"WAV1_EXT_F, WAV2_EXT_F",cellular_system
-35,Connectors,"Connector, USB Type-A male breakout board, male, 4 pins",2,,,,"WAV1_EXT_M, WAV2_EXT_M",cellular_system
+34,Connectors,"Connector, USB Type-A female breakout board, female, 4 pins",2,,,,"WAV1_EXT_F, WAV2_EXT_F",cellular_dongles_system
+35,Connectors,"Connector, USB Type-A male breakout board, male, 4 pins",2,,,,"WAV1_EXT_M, WAV2_EXT_M",cellular_dongles_system
 36,Connectors,"Connector, XT30U female, female, 2 pins",2,,Amass,XT30U-F,"A8M_XT30_F, JET_XT30_F",cellular_system
 37,Connectors,"Connector, XT30U male, male, 2 pins",1,,Amass,XT30U-M,JET_XT30_M,cellular_system
 38,Connectors,"Connector, XT90 female (plain), female, 2 pins",4,,Amass,,"XT90_VTOL1_F, XT90_VTOL2_F, XT90_VTOL3_F, XT90_VTOL4_F",power_system
@@ -46,6 +46,6 @@ Id,Category,Description,Qty,Unit,Manufacturer,MPN,Designators,Harnesses
 45,Wire,"Cable, 3 x 22 AWG",0,m,,,"W_ACT_14, W_ACT_15, W_ACT_16, W_ACT_23, W_ACT_24, W_ACT_25","actuators_left_wing_system, actuators_right_wing_system"
 46,Wire,"Cable, 3 x 26 AWG",0,m,,,"W_ACT_17, W_ACT_18, W_ACT_26, W_ACT_27, W_ACT_28, W_ACT_29, W_ACT_30, W_ACT_31, W_FC_05, W_RF_01","actuators_left_fuselage_system, actuators_left_wing_system, actuators_right_fuselage_system, actuators_right_wing_system, flight_control_system, rf_system"
 47,Wire,"Cable, 3 x 28 AWG",0,m,,,W_CEL_05,cellular_system
-48,Wire,"Cable, 4 x 22 AWG",0,m,,,"W_CEL_02, W_CEL_03",cellular_system
+48,Wire,"Cable, 4 x 22 AWG",0,m,,,"W_CEL_02, W_CEL_03",cellular_dongles_system
 49,Wire,"Cable, 4 x 26 AWG",0,m,,,"W_FC_02, W_FC_03, W_FC_04, W_RF_02","flight_control_system, rf_system"
 50,Wire,"Cable, 6 x 26 AWG",0,m,,,"W_FC_01, W_RF_03","flight_control_system, rf_system"

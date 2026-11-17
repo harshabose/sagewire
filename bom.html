@@ -28,8 +28,8 @@ td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
 <div class="table-wrap"><table>
 <thead><tr><th>Id</th><th>Description</th><th>Qty</th><th>Manufacturer</th><th>MPN</th><th>Designators</th><th>Harnesses</th></tr></thead>
 <tbody>
-<tr><td class="num">1</td><td>5G dongle board, USB to M.2 Key B (modem not included)</td><td class="num">2</td><td>Waveshare</td><td>USB TO M.2 B KEY</td><td>WAV1, WAV2</td><td>cellular</td></tr>
-<tr><td class="num">2</td><td>5G modem, M.2 Key B (30 x 52 mm)</td><td class="num">2</td><td>Telit Cinterion</td><td>FN990A28-HP</td><td>WAV1_MOD, WAV2_MOD</td><td>cellular</td></tr>
+<tr><td class="num">1</td><td>5G dongle board, USB to M.2 Key B (modem not included)</td><td class="num">2</td><td>Waveshare</td><td>USB TO M.2 B KEY</td><td>WAV1, WAV2</td><td>cellular_dongles</td></tr>
+<tr><td class="num">2</td><td>5G modem, M.2 Key B (30 x 52 mm)</td><td class="num">2</td><td>Telit Cinterion</td><td>FN990A28-HP</td><td>WAV1_MOD, WAV2_MOD</td><td>cellular_dongles</td></tr>
 <tr><td class="num">3</td><td>Airspeed sensor, TrueSpeed V2 (DroneCAN)</td><td class="num">1</td><td>Sierra</td><td>SA-TSPD 0019</td><td>SPD</td><td>flight_control</td></tr>
 <tr><td class="num">4</td><td>Base board, Jetson Orin Nano/NX, dual Ethernet</td><td class="num">1</td><td>Waveshare</td><td>JETSON-ORIN-IO-BASE-B</td><td>JET_BASE</td><td>cellular</td></tr>
 <tr><td class="num">5</td><td>CAN splitter, 6-port passive, DroneCAN</td><td class="num">1</td><td>SwiftWing</td><td><span class="warn">&mdash;</span></td><td>CAN_SPL</td><td>flight_control</td></tr>
@@ -67,8 +67,8 @@ td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
 <tr><td class="num">31</td><td>Connector, Molex CLIK-Mate 2.00 mm 6-pin housing, 6 pins</td><td class="num">1</td><td>Molex</td><td>502439-0600</td><td>FC_POWER1</td><td>flight_control</td></tr>
 <tr><td class="num">32</td><td>Connector, Molex KK 254 3-pin housing (DuPont), female, 3 pins</td><td class="num">22</td><td>Molex</td><td><span class="warn">&mdash;</span></td><td>FC_AUX1, FC_AUX2, FC_AUX3, FC_AUX4, FC_AUX5, FC_MAIN1, FC_MAIN2, FC_MAIN3, FC_MAIN4, FC_MAIN5, FC_MAIN6, UBEC12_CAM, UBEC12_SRV1, UBEC12_SRV2, UBEC12_SRV3, UBEC12_SRV4, UBEC5_LED1, UBEC5_LED2, UBEC5_LED3, UBEC5_LED4, UBEC5_LED5, UBEC5_LED6</td><td>actuators_frw, actuators_left_fuselage, actuators_right_fuselage, cellular</td></tr>
 <tr><td class="num">33</td><td>Connector, RJ45 plug (8P8C), male, 8 pins</td><td class="num">1</td><td></td><td><span class="warn">&mdash;</span></td><td>RF_RJ45</td><td>rf</td></tr>
-<tr><td class="num">34</td><td>Connector, USB Type-A female breakout board, female, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_F, WAV2_EXT_F</td><td>cellular</td></tr>
-<tr><td class="num">35</td><td>Connector, USB Type-A male breakout board, male, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_M, WAV2_EXT_M</td><td>cellular</td></tr>
+<tr><td class="num">34</td><td>Connector, USB Type-A female breakout board, female, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_F, WAV2_EXT_F</td><td>cellular_dongles</td></tr>
+<tr><td class="num">35</td><td>Connector, USB Type-A male breakout board, male, 4 pins</td><td class="num">2</td><td></td><td><span class="warn">&mdash;</span></td><td>WAV1_EXT_M, WAV2_EXT_M</td><td>cellular_dongles</td></tr>
 <tr><td class="num">36</td><td>Connector, XT30U female, female, 2 pins</td><td class="num">2</td><td>Amass</td><td>XT30U-F</td><td>A8M_XT30_F, JET_XT30_F</td><td>cellular</td></tr>
 <tr><td class="num">37</td><td>Connector, XT30U male, male, 2 pins</td><td class="num">1</td><td>Amass</td><td>XT30U-M</td><td>JET_XT30_M</td><td>cellular</td></tr>
 <tr><td class="num">38</td><td>Connector, XT90 female (plain), female, 2 pins</td><td class="num">4</td><td>Amass</td><td><span class="warn">&mdash;</span></td><td>XT90_VTOL1_F, XT90_VTOL2_F, XT90_VTOL3_F, XT90_VTOL4_F</td><td>power</td></tr>
@@ -87,7 +87,7 @@ td.num{text-align:right;white-space:nowrap}td.nowrap{white-space:nowrap}
 <tr><td class="num">45</td><td>Cable, 3 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_14, W_ACT_15, W_ACT_16, W_ACT_23, W_ACT_24, W_ACT_25</td><td>actuators_left_wing, actuators_right_wing</td></tr>
 <tr><td class="num">46</td><td>Cable, 3 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_ACT_17, W_ACT_18, W_ACT_26, W_ACT_27, W_ACT_28, W_ACT_29, W_ACT_30, W_ACT_31, W_FC_05, W_RF_01</td><td>actuators_left_fuselage, actuators_left_wing, actuators_right_fuselage, actuators_right_wing, flight_control, rf</td></tr>
 <tr><td class="num">47</td><td>Cable, 3 x 28 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_05</td><td>cellular</td></tr>
-<tr><td class="num">48</td><td>Cable, 4 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_02, W_CEL_03</td><td>cellular</td></tr>
+<tr><td class="num">48</td><td>Cable, 4 x 22 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_CEL_02, W_CEL_03</td><td>cellular_dongles</td></tr>
 <tr><td class="num">49</td><td>Cable, 4 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_FC_02, W_FC_03, W_FC_04, W_RF_02</td><td>flight_control, rf</td></tr>
 <tr><td class="num">50</td><td>Cable, 6 x 26 AWG</td><td class="num">0 m</td><td></td><td></td><td>W_FC_01, W_RF_03</td><td>flight_control, rf</td></tr>
 </tbody>
