@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAGE – Harness routing, top view</title>
+<style>
+:root{
+  --bg:#f4f5f7; --panel:#ffffff; --ink:#1d2330; --muted:#6b7385; --line:#e3e6ec; --accent:#2f6fde;
+  --paper:#fbfbfc; --grid:#eceef2; --grid2:#e1e4ea;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font:13px/1.45 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif}
+#app{display:grid;grid-template-columns:340px 1fr;height:100vh}
+aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.brand{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.brand h1{font-size:17px;margin:0 0 2px;letter-spacing:.2px}
+.brand .sub{color:var(--muted);font-size:12px}
+.sec{padding:14px 20px;border-bottom:1px solid var(--line)}
+.sec h2{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:0 0 10px;font-weight:600}
+.chips{display:flex;flex-direction:column;gap:4px}
+.chip{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:8px;cursor:pointer;user-select:none}
+.chip:hover{background:#f2f4f8}
+.chip .sw{width:22px;height:4px;border-radius:3px;flex:none}
+.chip .cnt{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+.chip.off{opacity:.35}
+.toggles{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.toggles label{display:flex;gap:7px;align-items:center;cursor:pointer;font-size:12.5px}
+.toggles input{accent-color:var(--accent)}
+#search{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;outline:none}
+#search:focus{border-color:var(--accent);box-shadow:0 0 0 3px #2f6fde22}
+#list{overflow:auto;flex:1;min-height:0;padding:6px 10px 14px}
+.row{display:grid;grid-template-columns:8px 1fr auto;gap:9px;align-items:center;padding:6px 10px;border-radius:8px;cursor:pointer}
+.row:hover{background:#f2f4f8}
+.row.sel{background:#e9f0fd}
+.row .dot{width:8px;height:8px;border-radius:50%}
+.row .id{font-weight:600;font-size:12.5px}
+.row .ft{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .len{color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+main{position:relative;overflow:hidden;background:var(--paper)}
+svg#v{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#err{position:absolute;left:50%;top:70px;transform:translateX(-50%);background:#fdecec;color:#9b1c1c;border:1px solid #f5b5b5;border-radius:8px;padding:10px 14px;font-size:12.5px;z-index:20;display:none;max-width:70%}
+svg#v.drag{cursor:grabbing}
+.toolbar{position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap;z-index:5}
+.btn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 11px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--ink);box-shadow:0 1px 2px #0000000a}
+.btn:hover{border-color:#c9cfdb}
+.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.zoom{position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.zoom .btn{width:34px;height:34px;padding:0;font-size:17px}
+.scalebar{position:absolute;left:16px;bottom:16px;background:#ffffffe8;border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:11.5px;color:var(--muted);z-index:5}
+.scalebar .bar{height:6px;border:1.5px solid var(--ink);border-top:none;margin-bottom:3px}
+.coords{position:absolute;right:16px;bottom:16px;background:#ffffffe8;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;z-index:5}
+.fwd{position:absolute;right:62px;top:14px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11.5px;color:var(--muted);z-index:5}
+#tip{position:absolute;pointer-events:none;background:#1d2330f2;color:#fff;border-radius:9px;padding:9px 12px;font-size:12px;max-width:340px;box-shadow:0 6px 24px #0003;display:none;z-index:9}
+#tip b{font-size:13px}
+#tip .k{color:#aab3c5}
+#card{position:absolute;right:16px;bottom:56px;width:330px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 30px #00000014;padding:14px 16px;display:none;z-index:6}
+#card h3{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
+#card .x{margin-left:auto;cursor:pointer;color:var(--muted);font-size:16px}
+#card table{width:100%;border-collapse:collapse;font-size:12px}
+#card td{padding:3px 0;vertical-align:top}
+#card td.k{color:var(--muted);width:92px}
+#card .note{color:var(--muted);font-size:11.5px;margin-top:6px}
+.foot{padding:10px 20px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
+
+/* ---------- SVG styles (all strokes are non-scaling: crisp at any zoom) ---------- */
+#v path,#v line,#v circle,#v rect{vector-effect:non-scaling-stroke}
+.grid1{stroke:var(--grid);stroke-width:.6;fill:none}
+.grid2{stroke:var(--grid2);stroke-width:.9;fill:none}
+.axis{stroke:#c7ccd6;stroke-width:1;stroke-dasharray:6 5;fill:none}
+.c-propdisc{fill:#2f6fde06;stroke:#9aa6bb;stroke-width:.8;stroke-dasharray:5 4}
+.c-gear{fill:none;stroke:#b8bfcc;stroke-width:.8;stroke-dasharray:3 3}
+.c-wing,.c-tail{fill:#ffffff;stroke:#5d6880;stroke-width:1.1}
+.c-surface{fill:#eef1f7;stroke:#7d879c;stroke-width:.8}
+.c-boom{fill:#d9dde5;stroke:#5d6880;stroke-width:.9}
+.c-nacelle{fill:#e8ebf0;stroke:#7d879c;stroke-width:.7}
+.c-fuselage{fill:#ffffff;stroke:#2b3345;stroke-width:1.5}
+.c-structure{fill:#e7eaf0;stroke:#a9b1c1;stroke-width:.5}
+.c-hatch{fill:none;stroke:#b9c0cd;stroke-width:.6;stroke-dasharray:4 3}
+.c-payload{fill:#f4f5f8;stroke:#8d96a8;stroke-width:.9;stroke-dasharray:7 4}
+.c-battery{fill:#fff1dc;stroke:#d9892b;stroke-width:.9}
+.c-tray{fill:#f1f3f7;stroke:#b0b8c7;stroke-width:.6}
+.c-mount{fill:#cfd5df;stroke:#6d778b;stroke-width:.6}
+.c-motor{fill:#a9b2c2;stroke:#3d4555;stroke-width:.8}
+.c-servo{fill:#d8efe3;stroke:#2d8a5b;stroke-width:.8}
+.c-avionics{fill:#dfe9fd;stroke:#2f6fde;stroke-width:.9}
+.c-light{fill:#fde3f1;stroke:#c2408a;stroke-width:.8}
+.c-antenna{fill:#dfe9fd;stroke:#2f6fde;stroke-width:.6}
+.c-sensor{fill:#dfe9fd;stroke:#2f6fde;stroke-width:.6}
+.c-connector{fill:#ffe7cc;stroke:#c66a12;stroke-width:.7}
+.c-hardware{fill:#e3e6ec;stroke:#a9b1c1;stroke-width:.4}
+.c-cadwire{fill:#5d6880;stroke:none}
+.cad-item:hover{filter:brightness(.96)}
+.cab{fill:none;stroke-linecap:round;stroke-linejoin:round;transition:opacity .15s}
+.halo{fill:none;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
+.hit{fill:none;stroke:transparent;stroke-width:12;stroke-linecap:round;cursor:pointer}
+.planned{stroke-dasharray:6 4}
+.dim .cab{opacity:.10}.dim .halo{opacity:.15}
+.dim .cab.on{opacity:1}.dim .halo.on{opacity:.95}
+.dev{fill:#fff;stroke:#1d2330;stroke-width:1.2;cursor:pointer}
+.dev.est{stroke-dasharray:2 2;fill:#fffbe6}
+.dev.on{fill:#1d2330}
+.lbl{font-family:Inter,"Segoe UI",system-ui,sans-serif;fill:#1d2330;paint-order:stroke;stroke:#fbfbfcee;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+.lbl.zone{fill:#6b7385;font-weight:600;letter-spacing:.8px;text-transform:uppercase}
+.lbl.small{fill:#4a5263}
+.cid{font-family:Inter,"Segoe UI",system-ui,sans-serif;font-weight:600;paint-order:stroke;stroke:#fff;stroke-width:3px;pointer-events:none}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="app">
+<aside>
+  <div class="brand">
+    <h1>SAGE · Harness routing</h1>
+    <div class="sub">Top view from SAGE_Master (Fusion) · 1:1 vector, mm · nose up</div>
+  </div>
+  <div class="sec">
+    <h2>Systems</h2>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div class="sec">
+    <h2>Layers</h2>
+    <div class="toggles" id="layers"></div>
+  </div>
+  <div class="sec" style="padding-bottom:10px">
+    <h2>Cables <span id="ncab" style="text-transform:none;letter-spacing:0"></span></h2>
+    <input id="search" placeholder="Search cable, connector or device…">
+  </div>
+  <div id="list"></div>
+  <div class="foot" id="foot"></div>
+</aside>
+<main id="main">
+  <svg id="v" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="-2300 -1150 4600 3500">
+    <g id="gGrid"></g><g id="gCad"></g><g id="gCab"></g><g id="gCid"></g><g id="gDev"></g><g id="gLbl"></g>
+  </svg>
+  <div class="toolbar">
+    <button class="btn primary" data-view="all">Whole aircraft</button>
+    <button class="btn" data-view="fus">Fuselage</button>
+    <button class="btn" data-view="nose">Nose bay</button>
+    <button class="btn" data-view="aft">Aft bay</button>
+    <button class="btn" data-view="rwing">Right wing</button>
+    <button class="btn" data-view="root">Wing root R</button>
+    <button class="btn" data-view="tail">Tail R</button>
+    <button class="btn" id="dl">Download SVG</button>
+  </div>
+  <div class="zoom"><button class="btn" id="zin">+</button><button class="btn" id="zout">−</button></div>
+  <div class="fwd">▲ FWD</div>
+  <div class="scalebar"><div class="bar" id="sbar"></div><span id="stxt"></span></div>
+  <div class="coords" id="coords">X — · Y —</div>
+  <div id="tip"></div><div id="err"></div>
+  <div id="card"></div>
+</main>
+</div>
+<script>
+window.addEventListener("error", e => { const b = document.getElementById("err"); if (b) { b.style.display = "block"; b.textContent = "Drawing error: " + e.message + " (line " + e.lineno + ")"; } });
+</script>
+<script>
+const DATA = /*__DATA__*/null;
+const NS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById("v");
+const $ = id => document.getElementById(id);
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+
+/* ---------- CAD ---------- */
+const ORDER = ["propdisc","gear","wing","tail","surface","nacelle","boom","fuselage","hatch","structure","payload","tray","battery","mount","motor","servo","avionics","sensor","antenna","light","connector","hardware","cadwire"];
+const LAYERGRP = {airframe:["wing","tail","surface","nacelle","boom","fuselage"], structure:["structure","hatch","tray","hardware","payload"],
+  equipment:["avionics","sensor","antenna","light","connector","servo","battery","motor","mount"], props:["propdisc"], gear:["gear"], cadwire:["cadwire"]};
+const gCad = $("gCad");
+const cadG = {};
+ORDER.forEach(l => cadG[l] = el("g", {id: "L-" + l}, gCad));
+DATA.cad.forEach(o => {
+  const p = el("path", {d: o.d, class: "cad-item c-" + o.l, "fill-rule": "evenodd"}, cadG[o.l]);
+  const t = el("title", {}, p); t.textContent = o.k;
+});
+/* grid */
+(function(){
+  const g = $("gGrid"); let d1 = "", d2 = "";
+  for (let y = -2400; y <= 2400; y += 100) (y % 500 ? (d1 += `M${y} -1200V2400`) : (d2 += `M${y} -1200V2400`));
+  for (let x = -1200; x <= 2400; x += 100) (x % 500 ? (d1 += `M-2400 ${x}H2400`) : (d2 += `M-2400 ${x}H2400`));
+  el("path", {d: d1, class: "grid1"}, g); el("path", {d: d2, class: "grid2"}, g);
+  el("path", {d: "M0 -1150V2350M-2350 0H2350", class: "axis"}, g);
+})();
+
+/* ---------- cables ---------- */
+function rounded(p, r = 14) {
+  if (p.length < 3) return "M" + p.map(q => q[1] + " " + q[0]).join(" L");
+  let d = `M${p[0][1]} ${p[0][0]}`;
+  for (let i = 1; i < p.length - 1; i++) {
+    const [ax, ay] = [p[i-1][1], p[i-1][0]], [bx, by] = [p[i][1], p[i][0]], [cx, cy] = [p[i+1][1], p[i+1][0]];
+    const l1 = Math.hypot(bx - ax, by - ay), l2 = Math.hypot(cx - bx, cy - by);
+    const rr = Math.min(r, l1 / 2, l2 / 2);
+    if (rr < .5) { d += ` L${bx} ${by}`; continue; }
+    const p1 = [bx - (bx - ax) / l1 * rr, by - (by - ay) / l1 * rr], p2 = [bx + (cx - bx) / l2 * rr, by + (cy - by) / l2 * rr];
+    d += ` L${p1[0].toFixed(1)} ${p1[1].toFixed(1)} Q${bx} ${by} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  const z = p[p.length - 1]; return d + ` L${z[1]} ${z[0]}`;
+}
+const W = g => g.startsWith("10") ? 4.2 : g.startsWith("8") ? 4.6 : g.startsWith("16") ? 3.2 : g.startsWith("22") || g.startsWith("24") ? 2.0 : 1.5;
+const gCab = $("gCab"), gCid = $("gCid");
+const C = DATA.cables.map((c, i) => {
+  c.i = i; if (!c.p.length) return c;
+  const d = rounded(c.p), w = c.s === "phase" ? 3.6 : W(c.g);
+  c.halo = el("path", {d, class: "halo", "stroke-width": w + 2.6}, gCab);
+  c.el = el("path", {d, class: "cab" + (c.planned ? " planned" : ""), stroke: DATA.sys[c.s].c, "stroke-width": w}, gCab);
+  c.hit = el("path", {d, class: "hit"}, gCab);
+  c.hit.addEventListener("mouseenter", e => hover(c, e)); c.hit.addEventListener("mousemove", e => moveTip(e));
+  c.hit.addEventListener("mouseleave", () => hover(null)); c.hit.addEventListener("click", e => { e.stopPropagation(); select({cable: c}); });
+  // id label on the longest segment
+  let best = 0, bi = 0; for (let k = 0; k < c.p.length - 1; k++) { const L = Math.hypot(c.p[k+1][0]-c.p[k][0], c.p[k+1][1]-c.p[k][1]); if (L > best) { best = L; bi = k; } }
+  const a = c.p[bi], b = c.p[bi+1], vert = Math.abs(b[0]-a[0]) > Math.abs(b[1]-a[1]);
+  c.lbl = el("text", {x: (a[1]+b[1])/2, y: (a[0]+b[0])/2, class: "cid", fill: DATA.sys[c.s].c, "text-anchor": "middle", "dominant-baseline": "central",
+    transform: vert ? `rotate(-90 ${(a[1]+b[1])/2} ${(a[0]+b[0])/2})` : ""}, gCid);
+  c.lbl.textContent = c.id.replace(/^W_/, "");
+  return c;
+});
+
+/* ---------- devices & labels ---------- */
+const gDev = $("gDev"), gLbl = $("gLbl");
+const DEV = DATA.dev, devEls = {};
+const used = new Set(); C.forEach(c => { used.add(c.da); used.add(c.db); });
+for (const k in DEV) {
+  const d = DEV[k]; if (!used.has(k)) continue;
+  const m = el("circle", {cx: d.y, cy: d.x, r: 4, class: "dev" + (d.cad ? "" : " est")}, gDev);
+  m.addEventListener("click", e => { e.stopPropagation(); select({dev: k}); });
+  m.addEventListener("mouseenter", e => { showTip(`<b>${d.n || k}</b><br><span class="k">${d.cad ? "In CAD" : "Not in CAD yet – position proposed"}</span><br><span class="k">X ${d.x} · Y ${d.y} mm</span>`, e); });
+  m.addEventListener("mousemove", moveTip); m.addEventListener("mouseleave", () => hideTip());
+  devEls[k] = m;
+  if (d.n) {
+    const dense = d.z === "nose" || d.z === "aft" || d.z.startsWith("root") || d.z === "batt";
+    let dir = d.ld || "e"; if (d.y < 0 && /^(wing|root|batt)/.test(d.z)) dir = dir.replace(/e|w/, m => m === "e" ? "w" : "e");
+    const t = el("text", {x: d.y, y: d.x, class: "lbl" + (dense ? " small" : ""), "data-min": dense ? 0.9 : 0.22, "data-dir": dir, "dominant-baseline": "central"}, gLbl);
+    t.textContent = d.n + (d.cad ? "" : " *");
+  }
+}
+[["NOSE AVIONICS BAY", -700, 0, .22], ["PAYLOAD BAY", 160, 0, .22], ["AFT BAY", 740, 0, .5], ["WING SPLIT  Y 500", -40, 500, .35], ["WING SPLIT  Y 500", -40, -500, .35],
+ ["FRONT BOOM JOINT", -74, 1040, .45], ["REAR BOOM JOINT", 524, 1040, .45], ["FRONT BOOM JOINT", -74, -1040, .45], ["REAR BOOM JOINT", 524, -1040, .45]]
+ .forEach(([s, x, y, mn]) => { const t = el("text", {x: y, y: x, class: "lbl zone", "text-anchor": "middle", "data-min": mn, "data-zone": 1}, gLbl); t.textContent = s; });
+
+/* ---------- view / zoom (uniform: preserveAspectRatio meet, single scale) ---------- */
+let vb = {x: -2300, y: -1150, w: 4600, h: 3500};
+function apply() {
+  if (![vb.x, vb.y, vb.w, vb.h].every(Number.isFinite) || vb.w <= 0 || vb.h <= 0) vb = {x: -2300, y: -1150, w: 4600, h: 3500};
+  svg.setAttribute("viewBox", `${vb.x} ${vb.y} ${vb.w} ${vb.h}`);
+  const r = svg.getBoundingClientRect(); if (r.width < 20 || r.height < 20) return;
+  const s = Math.min(r.width / vb.w, r.height / vb.h); // px per mm
+  gLbl.querySelectorAll("text").forEach(t => {
+    const zone = t.dataset.zone, fs = (zone ? 10.5 : 11.5) / s;
+    t.setAttribute("font-size", fs.toFixed(2));
+    if (!zone) { const dir = t.dataset.dir || "e";
+      const hx = dir.includes("e") ? 1 : dir.includes("w") ? -1 : 0, vy = dir.includes("n") ? -1 : dir.includes("s") ? 1 : 0;
+      t.setAttribute("text-anchor", hx > 0 ? "start" : hx < 0 ? "end" : "middle");
+      t.setAttribute("dx", (hx * (hx && vy ? 5 : 8) / s).toFixed(2)); t.setAttribute("dy", (vy * (hx ? 9 : 11) / s).toFixed(2)); }
+    t.style.display = s >= +t.dataset.min ? "" : "none";
+  });
+  gDev.querySelectorAll("circle").forEach(c => c.setAttribute("r", (3.6 / s).toFixed(2)));
+  const fs = 9.5 / s; C.forEach(c => { if (c.lbl) { c.lbl.setAttribute("font-size", fs.toFixed(2)); } });
+  gCid.style.display = (s > 1.6 && $("t-ids").checked) ? "" : "none";
+  // scale bar
+  const target = 130 / s, nice = [1,2,5,10,20,25,50,100,200,250,500,1000,2000];
+  const L = nice.reduce((a, b) => Math.abs(b - target) < Math.abs(a - target) ? b : a);
+  $("sbar").style.width = (L * s) + "px"; $("stxt").textContent = (L >= 1000 ? (L/1000) + " m" : L + " mm") + "   ·   1 px = " + (1/s).toFixed(2) + " mm";
+}
+function fit(x0, x1, y0, y1) { const p = 0.06; const w = (y1 - y0), h = (x1 - x0); vb = {x: y0 - w*p, y: x0 - h*p, w: w*(1+2*p), h: h*(1+2*p)}; aspect(); apply(); }
+function aspect() { const r = svg.getBoundingClientRect(); if (r.width < 20 || r.height < 20) return; const ar = r.width / r.height; const cx = vb.x + vb.w/2, cy = vb.y + vb.h/2;
+  if (vb.w / vb.h < ar) vb.w = vb.h * ar; else vb.h = vb.w / ar; vb.x = cx - vb.w/2; vb.y = cy - vb.h/2; }
+const VIEWS = {all: [-1080, 2280, -2180, 2180], fus: [-930, 1110, -560, 560], nose: [-830, -80, -400, 400], aft: [400, 760, -200, 200],
+  rwing: [-720, 1060, 300, 2150], root: [20, 340, 220, 600], tail: [1450, 2260, 650, 1480]};
+document.querySelectorAll("[data-view]").forEach(b => b.onclick = () => { fit(...VIEWS[b.dataset.view]);
+  document.querySelectorAll("[data-view]").forEach(x => x.classList.toggle("primary", x === b)); });
+function zoomAt(f, px, py) { const r = svg.getBoundingClientRect(); if (r.width < 20) return; const s = Math.min(r.width / vb.w, r.height / vb.h);
+  const ox = (r.width - vb.w * s) / 2, oy = (r.height - vb.h * s) / 2;
+  const mx = vb.x + (px - r.left - ox) / s, my = vb.y + (py - r.top - oy) / s;
+  vb.w /= f; vb.h /= f; vb.x = mx - (mx - vb.x) / f; vb.y = my - (my - vb.y) / f; apply(); }
+svg.addEventListener("wheel", e => { e.preventDefault(); zoomAt(Math.exp(-e.deltaY * 0.0015), e.clientX, e.clientY); }, {passive: false});
+$("zin").onclick = () => { const r = svg.getBoundingClientRect(); zoomAt(1.5, r.left + r.width/2, r.top + r.height/2); };
+$("zout").onclick = () => { const r = svg.getBoundingClientRect(); zoomAt(1/1.5, r.left + r.width/2, r.top + r.height/2); };
+let drag = null, moved = false;
+svg.addEventListener("pointerdown", e => { drag = {x: e.clientX, y: e.clientY, vb: {...vb}}; moved = false; });
+window.addEventListener("pointermove", e => {
+  const r = svg.getBoundingClientRect(), s = Math.min(r.width / vb.w, r.height / vb.h);
+  const ox = (r.width - vb.w * s) / 2, oy = (r.height - vb.h * s) / 2;
+  if (e.target.closest && e.target.closest("svg")) $("coords").textContent = `X ${(vb.y + (e.clientY - r.top - oy) / s).toFixed(0)} · Y ${(vb.x + (e.clientX - r.left - ox) / s).toFixed(0)} mm`;
+  if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 3) { moved = true; svg.classList.add("drag"); }
+  vb.x = drag.vb.x - dx / s; vb.y = drag.vb.y - dy / s; apply(); });
+window.addEventListener("pointerup", () => { drag = null; svg.classList.remove("drag"); });
+svg.addEventListener("click", () => { if (!moved) select(null); });
+window.addEventListener("resize", () => { aspect(); apply(); });
+window.addEventListener("keydown", e => { if (e.key === "Escape") select(null); });
+
+/* ---------- tooltip / selection ---------- */
+const tip = $("tip");
+function showTip(h, e) { tip.innerHTML = h; tip.style.display = "block"; moveTip(e); }
+function moveTip(e) { const r = $("main").getBoundingClientRect(); let x = e.clientX - r.left + 14, y = e.clientY - r.top + 14;
+  if (x + 350 > r.width) x -= 370; tip.style.left = x + "px"; tip.style.top = y + "px"; }
+function hideTip() { tip.style.display = "none"; }
+const fmtL = c => c.L ? `${(c.L/1000).toFixed(2)} m route · cut ≈ ${(c.cut/1000).toFixed(2)} m` : "local, at the device";
+function hover(c, e) {
+  if (!c) { hideTip(); if (!SEL) dim(null); return; }
+  if (!SEL) dim(new Set([c.i]));
+  showTip(`<b>${c.id}</b> <span class="k">· ${DATA.sys[c.s].n}</span><br>${c.a} → ${c.b}<br><span class="k">${c.g || "—"} · ${c.n || "?"} wires · ${fmtL(c)}</span>`, e);
+}
+let SEL = null;
+function dim(set) {
+  gCab.classList.toggle("dim", !!set);
+  C.forEach(c => { if (!c.el) return; const on = set && set.has(c.i); c.el.classList.toggle("on", !!on); c.halo.classList.toggle("on", !!on);
+    if (on) { gCab.appendChild(c.halo); gCab.appendChild(c.el); gCab.appendChild(c.hit); } });
+}
+function select(s) {
+  SEL = s; for (const k in devEls) devEls[k].classList.remove("on");
+  document.querySelectorAll(".row").forEach(r => r.classList.remove("sel"));
+  const card = $("card");
+  if (!s) { dim(null); card.style.display = "none"; return; }
+  if (s.cable) {
+    const c = s.cable; dim(new Set([c.i])); devEls[c.da]?.classList.add("on"); devEls[c.db]?.classList.add("on");
+    document.querySelector(`.row[data-i="${c.i}"]`)?.classList.add("sel");
+    card.innerHTML = `<h3><span class="dot" style="width:10px;height:10px;border-radius:50%;background:${DATA.sys[c.s].c}"></span>${c.id}<span class="x" onclick="select(null)">✕</span></h3>
+      <table><tr><td class="k">System</td><td>${DATA.sys[c.s].n}</td></tr><tr><td class="k">Harness</td><td>${c.h}</td></tr>
+      <tr><td class="k">From</td><td>${c.a}<br><span style="color:#6b7385">${DEV[c.da]?.n || c.da}</span></td></tr>
+      <tr><td class="k">To</td><td>${c.b}<br><span style="color:#6b7385">${DEV[c.db]?.n || c.db}</span></td></tr>
+      <tr><td class="k">Gauge · wires</td><td>${c.g || "—"} · ${c.n || "?"}</td></tr><tr><td class="k">Length</td><td>${fmtL(c)}</td></tr></table>
+      <div class="note">${c.note || ""}</div>`;
+  } else {
+    const k = s.dev, set = new Set(C.filter(c => c.da === k || c.db === k).map(c => c.i)); dim(set); devEls[k]?.classList.add("on");
+    const rows = C.filter(c => set.has(c.i)).map(c => `<tr><td class="k" style="color:${DATA.sys[c.s].c};font-weight:600">${c.id}</td><td>${c.da === k ? c.b : c.a}</td></tr>`).join("");
+    card.innerHTML = `<h3>${DEV[k].n || k}<span class="x" onclick="select(null)">✕</span></h3>
+      <div class="note" style="margin:0 0 8px">${DEV[k].cad ? "Position from SAGE_Master" : "Not in the CAD yet – proposed position"} · X ${DEV[k].x}, Y ${DEV[k].y} mm · ${set.size} cables</div>
+      <table>${rows}</table>`;
+  }
+  card.style.display = "block";
+}
+window.select = select;
+
+/* ---------- sidebar ---------- */
+const chips = $("chips"), sysOn = {};
+for (const k in DATA.sys) {
+  sysOn[k] = true; const n = C.filter(c => c.s === k).length;
+  const d = document.createElement("div"); d.className = "chip";
+  d.innerHTML = `<span class="sw" style="background:${DATA.sys[k].c}"></span>${DATA.sys[k].n}<span class="cnt">${n}</span>`;
+  d.onclick = () => { sysOn[k] = !sysOn[k]; d.classList.toggle("off", !sysOn[k]); refreshVis(); };
+  chips.appendChild(d);
+}
+const LT = [["airframe", "Airframe skins", true], ["structure", "Internal structure", true], ["equipment", "Equipment & connectors", true],
+  ["props", "Prop discs", true], ["gear", "Landing gear", false], ["cadwire", "Leads in CAD", false], ["labels", "Labels", true], ["ids", "Cable IDs (zoomed)", true]];
+LT.forEach(([k, n, on]) => { const l = document.createElement("label"); l.innerHTML = `<input type="checkbox" id="t-${k}" ${on ? "checked" : ""}> ${n}`; $("layers").appendChild(l);
+  l.querySelector("input").onchange = refreshVis; });
+function refreshVis() {
+  for (const g in LAYERGRP) { const on = $("t-" + g).checked; LAYERGRP[g].forEach(l => cadG[l].classList.toggle("hidden", !on)); }
+  gLbl.classList.toggle("hidden", !$("t-labels").checked);
+  const q = $("search").value.trim().toLowerCase();
+  C.forEach(c => { const vis = sysOn[c.s]; if (c.el) [c.el, c.halo, c.hit, c.lbl].forEach(e => e && e.classList.toggle("hidden", !vis)); });
+  renderList(q); apply();
+}
+function renderList(q) {
+  const L = $("list"); L.innerHTML = "";
+  const rows = C.filter(c => sysOn[c.s] && (!q || [c.id, c.a, c.b, DEV[c.da]?.n, DEV[c.db]?.n, c.h].join(" ").toLowerCase().includes(q)));
+  $("ncab").textContent = `· ${rows.length}`;
+  rows.forEach(c => { const r = document.createElement("div"); r.className = "row"; r.dataset.i = c.i;
+    r.innerHTML = `<span class="dot" style="background:${DATA.sys[c.s].c}"></span><div><div class="id">${c.id}${c.planned ? " · planned" : ""}</div><div class="ft">${DEV[c.da]?.n || c.da} → ${DEV[c.db]?.n || c.db}</div></div><span class="len">${c.cut ? (c.cut/1000).toFixed(2) + " m" : "local"}</span>`;
+    r.onclick = () => { select({cable: c}); if (c.p.length) { const xs = c.p.map(p => p[0]), ys = c.p.map(p => p[1]);
+      const pad = 60; fit(Math.min(...xs) - pad, Math.max(...xs) + pad, Math.min(...ys) - pad, Math.max(...ys) + pad); } };
+    r.onmouseenter = () => { if (!SEL) dim(new Set([c.i])); }; r.onmouseleave = () => { if (!SEL) dim(null); };
+    L.appendChild(r); });
+}
+$("search").oninput = () => renderList($("search").value.trim().toLowerCase());
+$("foot").innerHTML = `Built ${DATA.built} from sagewire/harness/*.yaml and SAGE_Master. * = device not in the CAD yet (position proposed).<br>Cut length ≈ route × 1.15 + 100 mm.`;
+
+/* ---------- export ---------- */
+$("dl").onclick = () => { const c = svg.cloneNode(true); const st = document.createElement("style");
+  st.textContent = [...document.styleSheets[0].cssRules].map(r => r.cssText).filter(t => t.startsWith("#v") || t.startsWith(".")).join("\n");
+  c.insertBefore(st, c.firstChild); c.setAttribute("xmlns", NS);
+  const b = new Blob([new XMLSerializer().serializeToString(c)], {type: "image/svg+xml"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "sage_harness_topview.svg"; a.click(); };
+
+refreshVis();
+let fitted = false;
+function init() { const r = svg.getBoundingClientRect(); if (r.width < 20 || r.height < 20) return; if (!fitted) { fitted = true; fit(...VIEWS.all); } else { aspect(); apply(); } }
+if (window.ResizeObserver) new ResizeObserver(init).observe($("main"));
+requestAnimationFrame(init); window.addEventListener("load", init); document.addEventListener("visibilitychange", init);
+</script>
+</body>
+</html>

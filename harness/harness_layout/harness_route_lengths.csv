@@ -1,0 +1,89 @@
+cable,harness,from,to,gauge,wires,system,plan_route_mm,est_cut_length_mm
+BATT_L_PDB,(planned),BATT_Bay_Receptacle_L,PDB_J2BAT,8 AWG,2,Battery & motor power,861,1100
+BATT_R_PDB,(planned),BATT_Bay_Receptacle_R,PDB_J2BAT,8 AWG,2,Battery & motor power,889,1130
+W_ACT_01,actuators_right_wing,XT90_VTOL1_M,ESC_VTOL1_IN,10 AWG,2,Battery & motor power,227,370
+W_ACT_02,actuators_left_wing,XT90_VTOL2_M,ESC_VTOL2_IN,10 AWG,2,Battery & motor power,416,580
+W_ACT_03,actuators_left_wing,XT90_VTOL3_M,ESC_VTOL3_IN,10 AWG,2,Battery & motor power,227,370
+W_ACT_04,actuators_right_wing,XT90_VTOL4_M,ESC_VTOL4_IN,10 AWG,2,Battery & motor power,416,580
+W_ACT_05,actuators_right_wing,ESC_VTOL1_PH,MOT_VTOL1,,3,Motor phases,902,1140
+W_ACT_06,actuators_left_wing,ESC_VTOL2_PH,MOT_VTOL2,,3,Motor phases,1008,1260
+W_ACT_07,actuators_left_wing,ESC_VTOL3_PH,MOT_VTOL3,,3,Motor phases,902,1140
+W_ACT_08,actuators_right_wing,ESC_VTOL4_PH,MOT_VTOL4,,3,Motor phases,1008,1260
+W_ACT_09,actuators_frw,ESC_FWD_PH,MOT_FWD,,3,Motor phases,408,570
+W_ACT_10,actuators_left_wing,SPLIT_L_WING,SRV_L1_M,26 AWG,2,12 V distribution,1015,1270
+W_ACT_11,actuators_left_wing,SPLIT_L_WING,SRV_L1_M,26 AWG,2,CAN bus,1015,1270
+W_ACT_12,actuators_left_wing,SPLIT_L_WING,SRV_L2_M,26 AWG,2,12 V distribution,2410,2880
+W_ACT_13,actuators_left_wing,SPLIT_L_WING,SRV_L2_M,26 AWG,2,CAN bus,2410,2880
+W_ACT_14,actuators_left_wing,SPLIT_L_WING,LED_L1,22 AWG,3,5 V distribution,1205,1490
+W_ACT_15,actuators_left_wing,SPLIT_L_WING,LED_L2,22 AWG,3,5 V distribution,1143,1420
+W_ACT_16,actuators_left_wing,SPLIT_L_WING,LED_LT,22 AWG,3,5 V distribution,1533,1870
+W_ACT_17,actuators_left_wing,SPLIT_L_WING,ESC_VTOL3_SIG,26 AWG,3,PWM / DShot / LED signal,300,450
+W_ACT_18,actuators_left_wing,SPLIT_L_WING,ESC_VTOL2_SIG,26 AWG,3,PWM / DShot / LED signal,354,510
+W_ACT_19,actuators_right_wing,SPLIT_R_WING,SRV_R1_M,26 AWG,2,12 V distribution,1015,1270
+W_ACT_20,actuators_right_wing,SPLIT_R_WING,SRV_R1_M,26 AWG,2,CAN bus,1015,1270
+W_ACT_21,actuators_right_wing,SPLIT_R_WING,SRV_R2_M,26 AWG,2,12 V distribution,2410,2880
+W_ACT_22,actuators_right_wing,SPLIT_R_WING,SRV_R2_M,26 AWG,2,CAN bus,2410,2880
+W_ACT_23,actuators_right_wing,SPLIT_R_WING,LED_R1,22 AWG,3,5 V distribution,1205,1490
+W_ACT_24,actuators_right_wing,SPLIT_R_WING,LED_R2,22 AWG,3,5 V distribution,1143,1420
+W_ACT_25,actuators_right_wing,SPLIT_R_WING,LED_RT,22 AWG,3,5 V distribution,1533,1870
+W_ACT_26,actuators_right_wing,SPLIT_R_WING,ESC_VTOL1_SIG,26 AWG,3,PWM / DShot / LED signal,300,450
+W_ACT_27,actuators_right_wing,SPLIT_R_WING,ESC_VTOL4_SIG,26 AWG,3,PWM / DShot / LED signal,354,510
+W_ACT_28,actuators_left_wing,SPLIT_L_FUS,CAN_SPL_P2,26 AWG,3,CAN bus,906,1150
+W_ACT_29,actuators_left_wing,SPLIT_L_FUS,CAN_SPL_P3,26 AWG,3,CAN bus,906,1150
+W_ACT_30,actuators_right_wing,SPLIT_R_FUS,CAN_SPL_P4,26 AWG,3,CAN bus,1002,1260
+W_ACT_31,actuators_right_wing,SPLIT_R_FUS,CAN_SPL_P5,26 AWG,3,CAN bus,1002,1260
+W_ACT_32,actuators_right_wing,CAP_VTOL1_A,ESC_VTOL1_CAP,,2,Battery & motor power,local,local
+W_ACT_33,actuators_right_wing,CAP_VTOL1_B,ESC_VTOL1_CAP,,2,Battery & motor power,local,local
+W_ACT_34,actuators_left_wing,CAP_VTOL2_A,ESC_VTOL2_CAP,,2,Battery & motor power,local,local
+W_ACT_35,actuators_left_wing,CAP_VTOL2_B,ESC_VTOL2_CAP,,2,Battery & motor power,local,local
+W_ACT_36,actuators_left_wing,CAP_VTOL3_A,ESC_VTOL3_CAP,,2,Battery & motor power,local,local
+W_ACT_37,actuators_left_wing,CAP_VTOL3_B,ESC_VTOL3_CAP,,2,Battery & motor power,local,local
+W_ACT_38,actuators_right_wing,CAP_VTOL4_A,ESC_VTOL4_CAP,,2,Battery & motor power,local,local
+W_ACT_39,actuators_right_wing,CAP_VTOL4_B,ESC_VTOL4_CAP,,2,Battery & motor power,local,local
+W_ACT_40,actuators_frw,CAP_FWD_A,ESC_FWD_CAP,,2,Battery & motor power,local,local
+W_ACT_41,actuators_frw,CAP_FWD_B,ESC_FWD_CAP,,2,Battery & motor power,local,local
+W_ACT_42,actuators_left_wing,UBEC12_SRV1,SPLIT_L_FUS,22 AWG,2,12 V distribution,894,1130
+W_ACT_43,actuators_left_wing,UBEC12_SRV2,SPLIT_L_FUS,22 AWG,2,12 V distribution,894,1130
+W_ACT_44,actuators_right_wing,UBEC12_SRV3,SPLIT_R_FUS,22 AWG,2,12 V distribution,770,990
+W_ACT_45,actuators_right_wing,UBEC12_SRV4,SPLIT_R_FUS,22 AWG,2,12 V distribution,770,990
+W_ACT_46,actuators_left_wing,UBEC5_LED1,SPLIT_L_FUS,22 AWG,2,5 V distribution,900,1140
+W_ACT_47,actuators_left_wing,UBEC5_LED2,SPLIT_L_FUS,22 AWG,2,5 V distribution,900,1140
+W_ACT_48,actuators_left_wing,UBEC5_LED3,SPLIT_L_FUS,22 AWG,2,5 V distribution,900,1140
+W_ACT_49,actuators_right_wing,UBEC5_LED4,SPLIT_R_FUS,22 AWG,2,5 V distribution,1024,1280
+W_ACT_50,actuators_right_wing,UBEC5_LED5,SPLIT_R_FUS,22 AWG,2,5 V distribution,1024,1280
+W_ACT_51,actuators_right_wing,UBEC5_LED6,SPLIT_R_FUS,22 AWG,2,5 V distribution,1024,1280
+W_ACT_52,actuators_right_wing,FC_AUX1,SPLIT_R_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_53,actuators_left_wing,FC_AUX2,SPLIT_L_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_54,actuators_left_wing,FC_AUX3,SPLIT_L_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_55,actuators_right_wing,FC_AUX4,SPLIT_R_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_56,actuators_frw,FC_AUX5,ESC_FWD_SIG,26 AWG,2,PWM / DShot / LED signal,1592,1940
+W_ACT_57,actuators_left_wing,FC_MAIN1,SPLIT_L_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_58,actuators_left_wing,FC_MAIN2,SPLIT_L_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_59,actuators_left_wing,FC_MAIN3,SPLIT_L_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_60,actuators_right_wing,FC_MAIN4,SPLIT_R_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_61,actuators_right_wing,FC_MAIN5,SPLIT_R_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_ACT_62,actuators_right_wing,FC_MAIN6,SPLIT_R_FUS,26 AWG,2,PWM / DShot / LED signal,984,1240
+W_CEL_01,cellular,A8M_NET,A8M_RJ45,26 AWG,4,UART / Ethernet / USB,80,200
+W_CEL_02,cellular,WAV1_EXT_F,WAV1_EXT_M,22 AWG,4,UART / Ethernet / USB,285,430
+W_CEL_03,cellular,WAV2_EXT_F,WAV2_EXT_M,22 AWG,4,UART / Ethernet / USB,285,430
+W_CEL_04,cellular,A8M_PWR,A8M_XT30_M,26 AWG,4,12 V distribution,62,180
+W_CEL_05,cellular,FC_TELEM2,U2T_UART,28 AWG,3,UART / Ethernet / USB,168,300
+W_CEL_06,cellular,UBEC12_HP,JET_PWR,16 AWG,2,12 V distribution,1672,2030
+W_CEL_07,cellular,UBEC12_CAM,A8M_XT30_F,22 AWG,2,12 V distribution,1720,2080
+W_FC_01,flight_control,PDB_FC_PWR,FC_POWER1,26 AWG,6,FC power & switch,1387,1700
+W_FC_02,flight_control,FC_CAN1,GPS_CAN1_1,26 AWG,4,CAN bus,117,240
+W_FC_03,flight_control,GPS_CAN1_2,ARSP_CAN,26 AWG,4,CAN bus,368,530
+W_FC_04,flight_control,FC_GPS2,LRF_COMM,30 AWG,4,UART / Ethernet / USB,20,130
+W_FC_05,flight_control,FC_CAN2,CAN_SPL_P1,26 AWG,3,CAN bus,78,190
+W_PWR_01,power,PDB_ESC,UBEC12_IN,16 AWG,2,Battery & motor power,87,210
+W_PWR_02,power,PDB_ESC,UBEC5_IN,16 AWG,2,Battery & motor power,167,300
+W_PWR_03,power,PDB_SW,SW_BTN,24 AWG,2,FC power & switch,1389,1700
+W_PWR_04,power,PDB_J2BAT,CAP_BAT,,2,Battery & motor power,local,local
+W_PWR_05,power,PDB_ESC,XT90_VTOL1_F,10 AWG,2,Battery & motor power,870,1110
+W_PWR_06,power,PDB_ESC,XT90_VTOL2_F,10 AWG,2,Battery & motor power,717,930
+W_PWR_07,power,PDB_ESC,XT90_VTOL3_F,10 AWG,2,Battery & motor power,830,1060
+W_PWR_08,power,PDB_ESC,XT90_VTOL4_F,10 AWG,2,Battery & motor power,757,980
+W_PWR_09,power,PDB_ESC,ESC_FWD_IN,10 AWG,2,Battery & motor power,145,270
+W_RF_01,rf,FC_TELEM1,RF_P3,28 AWG,3,UART / Ethernet / USB,165,290
+W_RF_02,rf,RF_P2,RF_RJ45,26 AWG,4,UART / Ethernet / USB,355,510
+W_RF_03,rf,RF_UBEC_HP,RF_P4,26 AWG,6,5 V distribution,1505,1840
